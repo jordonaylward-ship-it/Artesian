@@ -1,0 +1,1998 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Artesian Lead Desk</title>
+<style>
+:root{
+  --bg:#f5f5f7; --surface:#ffffff; --surface2:#fbfbfd; --text:#1d1d1f; --text2:#6e6e73; --text3:#86868b; --hair:#d2d2d7; --hair2:#e8e8ed;
+  --accent:#0071e3; --accent2:#0077ed; --accent-soft:#eaf3ff; --warn:#b25e00; --warn-soft:#fff4e5; --good:#248a3d; --good-soft:#e9f7ee;
+  --seg:#e8e8ed; --shadow:0 1px 2px rgba(0,0,0,.04), 0 6px 20px rgba(0,0,0,.05);
+  color-scheme:light dark; box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#000000; --surface:#1c1c1e; --surface2:#2c2c2e; --text:#f5f5f7; --text2:#a1a1a6; --text3:#8e8e93; --hair:#3a3a3c; --hair2:#2c2c2e;
+    --accent:#0a84ff; --accent2:#409cff; --accent-soft:#0d2a4a; --warn:#ffb340; --warn-soft:#3a2a0a; --good:#30d158; --good-soft:#0f2e1a;
+    --seg:#2c2c2e; --shadow:0 1px 2px rgba(0,0,0,.4);
+  }
+}
+*{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Helvetica Neue",Helvetica,Arial,sans-serif;font-size:17px;line-height:1.47;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+h1,h2,h3{margin:0;font-weight:600;letter-spacing:-.01em}
+h1{font-size:28px;line-height:1.14;letter-spacing:-.02em}
+h2{font-size:21px;line-height:1.2}
+h3{font-size:17px}
+p{margin:0}
+a{color:var(--accent);text-decoration:none}
+button{font:inherit;color:inherit}
+textarea,input,select{font:inherit;color:var(--text)}
+
+.top{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--surface) 78%,transparent);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid var(--hair2)}
+.top-inner{max-width:1180px;margin:0 auto;padding:10px 20px;display:flex;align-items:center;gap:16px}
+.brand{font-weight:600;font-size:17px;letter-spacing:-.01em;white-space:nowrap}
+.brand small{display:block;font-weight:400;font-size:12px;color:var(--text3);letter-spacing:0;margin-top:-2px}
+.seg{display:flex;background:var(--seg);border-radius:999px;padding:3px;gap:2px;margin:0 auto}
+.seg button{border:0;background:transparent;border-radius:999px;padding:7px 16px;font-size:14px;font-weight:500;color:var(--text2);cursor:pointer;transition:background .2s,color .2s,box-shadow .2s}
+.seg button.on{background:var(--surface);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.seg button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.icon-btn{border:0;background:transparent;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;cursor:pointer;color:var(--text2)}
+.icon-btn:hover{background:var(--hair2);color:var(--text)}
+
+main{max-width:1180px;margin:0 auto;padding:28px 20px 80px}
+.tab{display:none}
+.tab.on{display:block}
+.intro{margin-bottom:22px}
+.intro p{color:var(--text2);margin-top:6px;max-width:62ch}
+
+.grid2{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:24px;align-items:start}
+.grid3{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:900px){.grid2{grid-template-columns:1fr}.grid3{grid-template-columns:1fr}}
+.sticky{position:sticky;top:76px}
+@media (max-width:900px){.sticky{position:static}}
+
+.card{background:var(--surface);border-radius:18px;padding:20px;box-shadow:var(--shadow)}
+.card + .card{margin-top:16px}
+.card h2{margin-bottom:12px}
+.card h3{margin-bottom:8px}
+.quiet{color:var(--text2);font-size:15px}
+.tiny{color:var(--text3);font-size:13px}
+
+textarea{width:100%;border:1px solid var(--hair);border-radius:12px;background:var(--surface2);padding:12px 14px;resize:vertical;min-height:120px;line-height:1.45;font-size:15px;outline:none}
+textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 22%,transparent)}
+textarea.paste{min-height:280px;font-size:14px}
+textarea.out{min-height:90px;font-size:15px;background:var(--surface);border-color:var(--hair2)}
+input[type=text],input[type=number],input[type=date],select{width:100%;border:1px solid var(--hair);border-radius:10px;background:var(--surface2);padding:9px 12px;font-size:15px;outline:none;-webkit-appearance:none;appearance:none}
+input:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 22%,transparent)}
+select{background-image:linear-gradient(45deg,transparent 50%,var(--text3) 50%),linear-gradient(135deg,var(--text3) 50%,transparent 50%);background-position:calc(100% - 18px) 50%,calc(100% - 13px) 50%;background-size:5px 5px;background-repeat:no-repeat;padding-right:32px}
+label.f{display:block;font-size:13px;color:var(--text2);margin-bottom:5px}
+.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-top:14px}
+.fields.wide{grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
+.check{display:flex;align-items:center;gap:8px;font-size:15px;color:var(--text2)}
+.check input{width:18px;height:18px;accent-color:var(--accent)}
+
+.btn{border:0;border-radius:999px;padding:10px 20px;font-size:15px;font-weight:500;cursor:pointer;background:var(--accent);color:#fff;transition:background .15s,transform .1s}
+.btn:hover{background:var(--accent2)}
+.btn:active{transform:scale(.98)}
+.btn.ghost{background:transparent;color:var(--accent);padding:10px 12px}
+.btn.ghost:hover{background:var(--accent-soft)}
+.btn.sm{padding:6px 12px;font-size:13px}
+.btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.row.between{justify-content:space-between}
+.mt{margin-top:14px}
+.mt8{margin-top:8px}
+
+.facts{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:6px}
+.fact{background:var(--surface2);border:1px solid var(--hair2);border-radius:14px;padding:10px 14px;min-width:120px;flex:1}
+.fact b{display:block;font-size:19px;font-weight:600;letter-spacing:-.01em;line-height:1.2}
+.fact span{display:block;font-size:12px;color:var(--text3);margin-top:2px}
+.fact.sm b{font-size:15px;font-weight:500}
+.contact{display:flex;gap:14px;flex-wrap:wrap;margin-top:10px;font-size:15px;color:var(--text2)}
+.contact button{border:0;background:transparent;padding:0;color:var(--accent);cursor:pointer;font-size:15px}
+
+.flag{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:12px;font-size:14px;line-height:1.4;margin-top:8px}
+.flag.warn{background:var(--warn-soft);color:var(--warn)}
+.flag.info{background:var(--accent-soft);color:var(--accent)}
+.flag.good{background:var(--good-soft);color:var(--good)}
+.flag svg{flex:none;margin-top:3px}
+
+.opt{background:var(--surface2);border:1px solid var(--hair2);border-radius:16px;padding:16px}
+.opt .k{font-size:13px;color:var(--text3);margin-bottom:4px}
+.opt .price{font-size:30px;font-weight:600;letter-spacing:-.02em;line-height:1.1}
+.opt .price small{font-size:14px;font-weight:400;color:var(--text2);letter-spacing:0;margin-left:4px}
+.opt .booth{font-weight:600;margin-top:10px}
+.opt .items{color:var(--text2);font-size:14px;margin-top:6px;line-height:1.45}
+.opt .meta{display:flex;gap:14px;flex-wrap:wrap;margin-top:10px;font-size:13px;color:var(--text3)}
+.opt .alt{margin-top:8px;font-size:13px;color:var(--text3)}
+
+.msg{margin-top:18px}
+.msg .row{margin-bottom:6px}
+.msg .ttl{font-weight:600}
+.copy{border:1px solid var(--hair);background:var(--surface);border-radius:999px;padding:5px 12px;font-size:13px;font-weight:500;cursor:pointer;color:var(--accent)}
+.copy:hover{background:var(--accent-soft)}
+.copy.done{color:var(--good);border-color:var(--good)}
+
+.pick{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.pick button{border:1px solid var(--hair);background:var(--surface);border-radius:999px;padding:8px 16px;font-size:14px;font-weight:500;cursor:pointer;color:var(--text2)}
+.pick button.on{background:var(--text);color:var(--bg);border-color:var(--text)}
+
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--hair2);vertical-align:top}
+th{font-weight:500;color:var(--text3);font-size:12px}
+td.num,th.num{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+tr:last-child td{border-bottom:0}
+.tablewrap{overflow-x:auto}
+details{border-top:1px solid var(--hair2);padding:10px 0}
+details summary{cursor:pointer;font-weight:500;list-style:none;display:flex;justify-content:space-between;align-items:center}
+details summary::-webkit-details-marker{display:none}
+details summary::after{content:"+";color:var(--text3);font-size:20px;font-weight:300}
+details[open] summary::after{content:"\2212"}
+.pkg{display:grid;grid-template-columns:110px 1fr;gap:10px;padding:10px 0;border-bottom:1px solid var(--hair2);font-size:14px}
+.pkg:last-child{border-bottom:0}
+.pkg b{font-size:15px}
+.pkg span{color:var(--text2)}
+.rules li{margin:6px 0;color:var(--text2);font-size:14px}
+.rules{padding-left:18px;margin:0}
+.total{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--hair2);font-size:15px}
+.total.big{font-size:22px;font-weight:600;border-bottom:0;padding-top:12px}
+.total span:last-child{font-variant-numeric:tabular-nums}
+.empty{color:var(--text3);font-size:15px;padding:30px 0;text-align:center}
+
+.sheet-bg{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;z-index:30;align-items:center;justify-content:center;padding:20px}
+.sheet-bg.on{display:flex}
+.sheet{background:var(--surface);border-radius:20px;padding:24px;width:100%;max-width:440px;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(20px);background:var(--text);color:var(--bg);padding:10px 18px;border-radius:999px;font-size:14px;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:40}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+@media (prefers-reduced-motion: reduce){*{transition:none !important}}
+@media (max-width:700px){
+  .top-inner{flex-wrap:wrap;gap:10px}
+  .seg{order:3;width:100%;justify-content:space-between}
+  .seg button{flex:1;padding:7px 8px;font-size:13px}
+  h1{font-size:24px}
+  .card{padding:16px;border-radius:16px}
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="top-inner">
+    <div class="brand">Artesian Lead Desk<small>Bottle service and booth bookings</small></div>
+    <nav class="seg" role="tablist" aria-label="Sections">
+      <button class="on" data-tab="lead" role="tab">New lead</button>
+      <button data-tab="reply" role="tab">Reply</button>
+      <button data-tab="quote" role="tab">Quote</button>
+      <button data-tab="venues" role="tab">Venues</button>
+    </nav>
+    <button class="icon-btn" id="settingsBtn" title="Your details" aria-label="Your details">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3h0a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8v0a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+    </button>
+  </div>
+</header>
+
+<main>
+  <!-- NEW LEAD -->
+  <section class="tab on" id="tab-lead">
+    <div class="intro"><h1>New lead</h1><p>Paste the Zoho lead page. It pulls out the venue, date, numbers and what they asked for, then writes the first SMS, the email with two options and the CRM note.</p></div>
+    <div class="grid2">
+      <div class="sticky">
+        <div class="card">
+          <h2>Lead sheet</h2>
+          <textarea class="paste" id="leadText" placeholder="Paste the whole Zoho lead page here, or just the message they wrote."></textarea>
+          <div class="row between mt">
+            <button class="btn" id="readLead">Read lead</button>
+            <button class="btn ghost" id="clearLead">Clear</button>
+          </div>
+        </div>
+      </div>
+      <div id="leadOut">
+        <div class="card"><div class="empty">Nothing read yet. Paste a lead and press Read lead.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- REPLY -->
+  <section class="tab" id="tab-reply">
+    <div class="intro"><h1>Reply</h1><p>Paste what the client sent back. It works out what they are asking and writes the answer, using the lead you last read for the booth and pricing.</p></div>
+    <div class="grid2">
+      <div class="sticky">
+        <div class="card">
+          <h2>Who you are replying to</h2>
+          <div class="fields">
+            <div><label class="f">First name</label><input type="text" id="rName" placeholder="Amer"></div>
+            <div><label class="f">Venue</label><select id="rVenue"><option value="">Not sure</option><option value="tempo">Tempo</option><option value="bedroom">Bedroom</option><option value="havana">Havana</option><option value="taxoffice">Tax Office</option><option value="cali">Cali Beach</option></select></div>
+            <div><label class="f">Date</label><input type="date" id="rDate"></div>
+            <div><label class="f">Guests</label><input type="number" id="rGuests" min="1" placeholder="8"></div>
+          </div>
+          <div class="fields" id="rCaliWrap" style="display:none"><div><label class="f">Cali Saturday session</label><select id="rCali"><option value="day">Day, 12pm to 6pm</option><option value="night">Night, 7pm to close</option></select></div></div>
+          <h2 class="mt">What they said</h2>
+          <textarea id="replyText" placeholder="Paste their email or text here."></textarea>
+          <div class="fields wide"><div><label class="f">What they are asking</label><select id="scenario"><option value="auto">Work it out from the message</option></select></div></div>
+          <div class="row between mt">
+            <button class="btn" id="writeReply">Write reply</button>
+            <button class="btn ghost" id="clearReply">Clear</button>
+          </div>
+        </div>
+      </div>
+      <div id="replyOut">
+        <div class="card"><div class="empty">Paste their message and press Write reply.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUOTE -->
+  <section class="tab" id="tab-quote">
+    <div class="intro"><h1>Quote</h1><p>Lock in the exact booth and package. It does the gratuity, surcharges, deposit and balance, then writes the summary email, the SevenRooms note and the CRM note.</p></div>
+    <div class="grid2">
+      <div class="sticky">
+        <div class="card">
+          <h2>Booking</h2>
+          <div class="fields">
+            <div><label class="f">First name</label><input type="text" id="qName" placeholder="Amer"></div>
+            <div><label class="f">Venue</label><select id="qVenue"><option value="tempo">Tempo</option><option value="bedroom">Bedroom</option><option value="havana">Havana</option><option value="taxoffice">Tax Office</option><option value="cali">Cali Beach</option></select></div>
+            <div><label class="f">Date</label><input type="date" id="qDate"></div>
+            <div><label class="f">Guests</label><input type="number" id="qGuests" min="1" placeholder="8"></div>
+          </div>
+          <div class="fields wide">
+            <div id="qSessionWrap" style="display:none"><label class="f">Cali Saturday session</label><select id="qCali"><option value="day">Day, 12pm to 6pm</option><option value="night">Night, 7pm to close</option></select></div>
+            <div><label class="f">Booth</label><select id="qBooth"></select></div>
+            <div><label class="f">Package</label><select id="qPkg"></select></div>
+            <div id="qCustomWrap" style="display:none"><label class="f">Bottle service spend</label><input type="number" id="qCustom" min="0" placeholder="750"></div>
+          </div>
+          <div class="fields wide">
+            <div><label class="f">Mixes</label><input type="text" id="qMixes" placeholder="Coke, lemonade, soda"></div>
+            <div><label class="f">Signage</label><input type="text" id="qSignage" placeholder="Happy 30th Sarah"></div>
+            <div><label class="f">Arrival time</label><input type="text" id="qArrival" placeholder="10.30pm"></div>
+            <div><label class="f">Deposit paid</label><input type="number" id="qDeposit" min="0" placeholder="Blank for 20 percent"></div>
+          </div>
+          <div class="row mt">
+            <label class="check"><input type="checkbox" id="qOnline" checked> 2.1 percent online card surcharge</label>
+            <label class="check"><input type="checkbox" id="qHoliday"> 15 percent public holiday</label>
+            <label class="check" id="qSundayWrap" style="display:none"><input type="checkbox" id="qSunday"> 10 percent Sunday</label>
+          </div>
+          <div class="row mt"><button class="btn" id="buildQuote">Build quote</button></div>
+        </div>
+      </div>
+      <div id="quoteOut">
+        <div class="card"><div class="empty">Pick the booth and package and press Build quote.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- VENUES -->
+  <section class="tab" id="tab-venues">
+    <div class="intro"><h1>Venues</h1><p>Every booth, minimum spend, package and bottle price across the five venues, with the rules that matter on the night.</p></div>
+    <div class="pick" id="venuePick"></div>
+    <div id="venueOut"></div>
+  </section>
+</main>
+
+<div class="sheet-bg" id="sheet">
+  <div class="sheet">
+    <h2>Your details</h2>
+    <p class="quiet mt8">Used in every message and sign off. Saved on this device.</p>
+    <div class="fields wide">
+      <div><label class="f">First name</label><input type="text" id="sName" placeholder="Jordy"></div>
+      <div><label class="f">Mobile</label><input type="text" id="sMobile" placeholder="04xx xxx xxx"></div>
+    </div>
+    <div class="fields wide"><div><label class="f">Sign off line</label><input type="text" id="sTitle" placeholder="Sales and Events, Artesian Hospitality"></div></div>
+    <div class="row between mt">
+      <button class="btn" id="saveSettings">Save</button>
+      <button class="btn ghost" id="closeSettings">Close</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast">Copied</div>
+<script>
+/* ===== Artesian venue data =====
+   Source: VENUE_BOOTH_PRICING_2026.pdf, TEMPO, Bedroom, Havana, Tax Office and Cali Beach bottle service brochures,
+   plus each venue website for hours and booking terms. Edit here if prices change. */
+
+const NIGHTCLUB_BOTTLES = [
+  {cat:'Vodka', name:'Belvedere 700ml', price:400},
+  {cat:'Vodka', name:'Belvedere 1.75L', price:1000},
+  {cat:'Vodka', name:'Belvedere 3L', price:1600},
+  {cat:'Vodka', name:'Belvedere 6L', price:2500},
+  {cat:'Tequila', name:'1800 Coconut', price:400},
+  {cat:'Tequila', name:'1800 Silver', price:400},
+  {cat:'Tequila', name:'1800 Reposado', price:400},
+  {cat:'Tequila', name:'1800 Anejo', price:400},
+  {cat:'Tequila', name:'Patron Silver', price:450},
+  {cat:'Tequila', name:'Patron Cafe', price:450},
+  {cat:'Tequila', name:'Volando', price:450},
+  {cat:'Gin', name:'Tanqueray', price:400},
+  {cat:'Gin', name:'Hendricks', price:400},
+  {cat:'Gin', name:'Bombay Sapphire', price:400},
+  {cat:'Gin', name:'Tanqueray 10', price:400},
+  {cat:'Whisky', name:'Johnnie Walker Red', price:400},
+  {cat:'Whisky', name:'Jameson', price:400},
+  {cat:'Whisky', name:'Chivas Regal 12yr', price:400},
+  {cat:'Whisky', name:'Chivas Regal 18yr', price:450},
+  {cat:'Whisky', name:'Johnnie Walker Black', price:450},
+  {cat:'Whisky', name:'Glenfiddich 12yr', price:450},
+  {cat:'Whisky', name:'Johnnie Walker Blue', price:1200},
+  {cat:'Rum and bourbon', name:'Jack Daniels', price:400},
+  {cat:'Rum and bourbon', name:'Jim Beam', price:400},
+  {cat:'Rum and bourbon', name:'Captain Morgan', price:400},
+  {cat:'Rum and bourbon', name:'Wild Turkey', price:400},
+  {cat:'Rum and bourbon', name:'Makers Mark', price:400},
+  {cat:'Liqueurs', name:'Alize', price:400},
+  {cat:'Liqueurs', name:'Malibu', price:400},
+  {cat:'Liqueurs', name:'Wet Cat', price:400},
+  {cat:'Liqueurs', name:'Opal Nera', price:400},
+  {cat:'Liqueurs', name:'Opal Bianca', price:400},
+  {cat:'Liqueurs', name:'Fireball', price:400},
+  {cat:'Champagne', name:'Chandon', price:90},
+  {cat:'Champagne', name:'Moet Chandon', price:140},
+  {cat:'Champagne', name:'Veuve Clicquot', price:180},
+  {cat:'Champagne', name:'Veuve Rose', price:210},
+  {cat:'Champagne', name:'Dom Perignon', price:550},
+  {cat:'Champagne', name:'Louis Roederer Cristal', price:750},
+  {cat:'Champagne', name:'Ace of Spades', price:1150},
+  {cat:'Champagne', name:'Louis Roederer Cristal Rose', price:1800},
+  {cat:'Cognac', name:'Hennessy VSOP', price:450},
+  {cat:'Cognac', name:'Hennessy XO', price:800},
+  {cat:'Cognac', name:'Remy Martin XIII', price:8500},
+  {cat:'Extras', name:'Water x 6', price:20},
+  {cat:'Extras', name:'Red Bull x 6', price:25}
+];
+
+const TAX_OFFICE_BOTTLES = [
+  {cat:'Vodka', name:'Belvedere 700ml', price:400},
+  {cat:'Vodka', name:'Belvedere 1.75L', price:1000},
+  {cat:'Vodka', name:'Belvedere 3L', price:1600},
+  {cat:'Vodka', name:'Belvedere 6L', price:2900},
+  {cat:'Tequila', name:'Volcan Blanco', price:400},
+  {cat:'Tequila', name:'Volcan Cristalino', price:450},
+  {cat:'Tequila', name:'1800 Coconut', price:450},
+  {cat:'Tequila', name:'Patron Silver', price:450},
+  {cat:'Tequila', name:'Patron Reposado', price:450},
+  {cat:'Tequila', name:'1800 Anejo', price:450},
+  {cat:'Tequila', name:'Patron XO Cafe', price:500},
+  {cat:'Tequila', name:'Don Julio 1942', price:725},
+  {cat:'Tequila', name:'Clase Azul', price:1100},
+  {cat:'Tequila', name:'Don Julio Real', price:1900},
+  {cat:'Tequila', name:'Gran Patron Piedra', price:1900},
+  {cat:'Tequila', name:'Don Julio Ultima', price:2100},
+  {cat:'Liqueurs', name:'Alize Blue', price:400},
+  {cat:'Liqueurs', name:'Jagermeister', price:450},
+  {cat:'Liqueurs', name:'Wet Cat', price:400},
+  {cat:'Liqueurs', name:'Opal Nera', price:400},
+  {cat:'Liqueurs', name:'Opal Bianca', price:400},
+  {cat:'Liqueurs', name:'Fireball', price:400},
+  {cat:'Rum and bourbon', name:'Jack Daniels', price:400},
+  {cat:'Rum and bourbon', name:'Captain Morgan', price:400},
+  {cat:'Rum and bourbon', name:'Sailor Jerry', price:400},
+  {cat:'Rum and bourbon', name:'Makers Mark', price:450},
+  {cat:'Whisky', name:'Johnnie Walker Black', price:400},
+  {cat:'Whisky', name:'Jameson', price:400},
+  {cat:'Whisky', name:'Chivas 18yr', price:450},
+  {cat:'Whisky', name:'Macallan Double Cask', price:550},
+  {cat:'Whisky', name:'Johnnie Walker Blue', price:1300},
+  {cat:'Whisky', name:'Glenfiddich 21 Gran Reserva', price:1800},
+  {cat:'Whisky', name:'Macallan Reflexion', price:4900},
+  {cat:'Whisky', name:'The John Walker', price:8500},
+  {cat:'Cognac', name:'Hennessy VSOP', price:400},
+  {cat:'Cognac', name:'Hennessy XO', price:700},
+  {cat:'Cognac', name:'Remy Martin Louis XIII', price:8500},
+  {cat:'Cognac', name:'Richard Hennessy, pre order only', price:18000},
+  {cat:'Champagne', name:'Moet Chandon Imperial', price:140},
+  {cat:'Champagne', name:'Moet Chandon Ice Imperial', price:170},
+  {cat:'Champagne', name:'Moet Chandon Rose Imperial', price:250},
+  {cat:'Champagne', name:'Veuve Clicquot Yellow Label', price:150},
+  {cat:'Champagne', name:'Veuve Clicquot Rose', price:240},
+  {cat:'Champagne', name:'Veuve Clicquot La Grande Dame', price:735},
+  {cat:'Champagne', name:'Ruinart Blanc de Blancs', price:360},
+  {cat:'Champagne', name:'Dom Perignon Vintage', price:550},
+  {cat:'Champagne', name:'Krug Grande Cuvee', price:680},
+  {cat:'Champagne', name:'Krug Vintage', price:1060},
+  {cat:'Champagne', name:'Ace of Spades Brut Gold', price:1055},
+  {cat:'Large format champagne', name:'Moet Imperial Magnum 1.5L', price:345},
+  {cat:'Large format champagne', name:'Moet Imperial Jeroboam 3L', price:1385},
+  {cat:'Large format champagne', name:'Moet Imperial Methuselah 6L', price:2775},
+  {cat:'Large format champagne', name:'Dom Perignon Magnum 1.5L', price:1750},
+  {cat:'Large format champagne', name:'Veuve Clicquot Magnum 1.5L', price:440},
+  {cat:'Large format champagne', name:'Veuve Clicquot Jeroboam 3L', price:2160},
+  {cat:'Large format champagne', name:'Veuve Clicquot Methuselah 6L', price:4020},
+  {cat:'Large format champagne', name:'Veuve Clicquot Salmanazar 9L', price:6030},
+  {cat:'Large format champagne', name:'Veuve Clicquot Balthazar 12L', price:8550},
+  {cat:'Large format champagne', name:'Ace of Spades 1.5L', price:2500},
+  {cat:'Large format champagne', name:'Ace of Spades 3L', price:8400},
+  {cat:'Large format champagne', name:'Ace of Spades 6L, pre order only', price:21000},
+  {cat:'Extras', name:'Bottled water x 4', price:20},
+  {cat:'Extras', name:'Red Bull x 6', price:30}
+];
+
+const CALI_BOTTLES = [
+  {cat:'Vodka', name:'Belvedere 700ml', price:400},
+  {cat:'Vodka', name:'Belvedere 10 700ml', price:950},
+  {cat:'Vodka', name:'Belvedere 1.75L', price:1000},
+  {cat:'Vodka', name:'Belvedere 3L', price:1600},
+  {cat:'Vodka', name:'Belvedere 6L', price:2900},
+  {cat:'Whisky', name:'Johnnie Walker Black', price:400},
+  {cat:'Whisky', name:'Jameson', price:400},
+  {cat:'Whisky', name:'Glenfiddich', price:450},
+  {cat:'Whisky', name:'Chivas 18', price:550},
+  {cat:'Whisky', name:'Macallan Double', price:550},
+  {cat:'Whisky', name:'Johnnie Walker Blue', price:1300},
+  {cat:'Rum and bourbon', name:'Jack Daniels', price:400},
+  {cat:'Rum and bourbon', name:'Captain Morgan', price:400},
+  {cat:'Rum and bourbon', name:'Wild Turkey', price:400},
+  {cat:'Rum and bourbon', name:'Makers Mark', price:450},
+  {cat:'Tequila', name:'Don Julio Blanco', price:400},
+  {cat:'Tequila', name:'Casamigos Blanco', price:400},
+  {cat:'Tequila', name:'Patron Silver', price:400},
+  {cat:'Tequila', name:'Patron Reposado', price:400},
+  {cat:'Tequila', name:'1800 Coconut', price:400},
+  {cat:'Tequila', name:'1800 Reposado', price:400},
+  {cat:'Tequila', name:'1800 Silver', price:400},
+  {cat:'Tequila', name:'1800 Anejo', price:450},
+  {cat:'Tequila', name:'Volcan De Mi Tierra Blanco', price:450},
+  {cat:'Tequila', name:'Volcan De Mi Tierra Cristalino Luminous', price:450},
+  {cat:'Tequila', name:'Volando', price:450},
+  {cat:'Tequila', name:'Casamigos Reposado', price:450},
+  {cat:'Tequila', name:'Don Julio Anejo', price:500},
+  {cat:'Tequila', name:'Casamigos Anejo', price:500},
+  {cat:'Tequila', name:'Patron XO Cafe', price:650},
+  {cat:'Tequila', name:'Don Julio 1942', price:1200},
+  {cat:'Tequila', name:'Clase Azul', price:1400},
+  {cat:'Tequila', name:'Don Julio Real', price:1900},
+  {cat:'Tequila', name:'Gran Patron Piedra', price:1950},
+  {cat:'Gin', name:'Bombay Sapphire', price:400},
+  {cat:'Gin', name:'Tanqueray', price:400},
+  {cat:'Gin', name:'Hendricks', price:450},
+  {cat:'Gin', name:'Tanqueray 10', price:500},
+  {cat:'Liqueurs', name:'Alize Blue', price:400},
+  {cat:'Liqueurs', name:'Jagermeister', price:400},
+  {cat:'Liqueurs', name:'Wet Cat', price:400},
+  {cat:'Liqueurs', name:'Opal Nera', price:400},
+  {cat:'Liqueurs', name:'Opal Bianca', price:400},
+  {cat:'Liqueurs', name:'Fireball', price:400},
+  {cat:'Cognac', name:'Hennessy VSOP', price:400},
+  {cat:'Cognac', name:'Hennessy XO', price:700},
+  {cat:'Cognac', name:'Remy Martin Louis XIII', price:8500},
+  {cat:'Champagne', name:'Moet Chandon Imperial', price:155},
+  {cat:'Champagne', name:'Moet Chandon Ice Imperial', price:190},
+  {cat:'Champagne', name:'Moet Chandon Rose Imperial', price:240},
+  {cat:'Champagne', name:'Ruinart Blanc de Blancs', price:340},
+  {cat:'Champagne', name:'Krug Grande Cuvee', price:830},
+  {cat:'Champagne', name:'Krug Vintage', price:970},
+  {cat:'Champagne', name:'Veuve Clicquot Yellow Label', price:190},
+  {cat:'Champagne', name:'Veuve Clicquot Rose', price:255},
+  {cat:'Champagne', name:'Veuve Clicquot La Grande Dame 2008', price:1420},
+  {cat:'Champagne', name:'Dom Perignon Vintage', price:740},
+  {cat:'Champagne', name:'Ace of Spades Brut Gold', price:1190},
+  {cat:'Large format champagne', name:'Moet Imperial Magnum 1.5L', price:375},
+  {cat:'Large format champagne', name:'Moet Imperial Jeroboam 3L', price:1395},
+  {cat:'Large format champagne', name:'Moet Imperial Methuselah 6L', price:2775},
+  {cat:'Large format champagne', name:'Dom Perignon Magnum 1.5L', price:1980},
+  {cat:'Large format champagne', name:'Veuve Clicquot Magnum 1.5L', price:490},
+  {cat:'Large format champagne', name:'Veuve Clicquot Jeroboam 3L', price:2160},
+  {cat:'Large format champagne', name:'Veuve Clicquot Methuselah 6L', price:4020},
+  {cat:'Large format champagne', name:'Veuve Clicquot Salmanazar 9L', price:6030},
+  {cat:'Large format champagne', name:'Veuve Clicquot Balthazar 12L', price:8550},
+  {cat:'Platters, serve 2 to 4', name:'Beach Club Seafood Platter', price:145},
+  {cat:'Platters, serve 2 to 4', name:'Mediterranean Mezze Board', price:78},
+  {cat:'Platters, serve 2 to 4', name:'Cali Slider Board', price:75},
+  {cat:'Extras', name:'Bottled water x 4', price:20},
+  {cat:'Extras', name:'Red Bull x 6', price:35}
+];
+
+/* Packages shared by Tempo and Bedroom, with the two Bedroom differences applied below */
+const TEMPO_PACKAGES = [
+  {n:1, price:1000, items:['2 x Belvedere 700ml','12 x Corona','3 x unlimited mixers of your choice','Shots on arrival'], tags:['beer','shots']},
+  {n:2, price:1000, items:['2 x Belvedere 700ml','1 x Wet Cat','3 x unlimited mixers of your choice'], tags:['vodka']},
+  {n:3, price:1500, items:['1 x Belvedere 1.75L','1 x Wet Cat','12 x Corona','4 x unlimited mixers of your choice'], tags:['beer']},
+  {n:4, price:1500, items:['1 x Belvedere 1.75L','1 x Wet Cat','1 x Veuve Clicquot','6 x Red Bull','4 x unlimited mixers of your choice','Shots on arrival'], tags:['champagne','shots']},
+  {n:5, price:2000, items:['1 x Belvedere 3L','2 x Veuve Clicquot','1 x Wet Cat','Unlimited mixers','Shots on arrival'], tags:['champagne','shots']},
+  {n:6, price:2000, items:['1 x Belvedere 3L','1 x Veuve Clicquot','1 x Fireball','12 x Red Bull','Unlimited mixers'], tags:['champagne','shots']},
+  {n:7, price:2500, items:['1 x Belvedere 3L','1 x Chivas Regal 18yr','1 x Veuve Clicquot','1 x Wet Cat','12 x Red Bull','Unlimited mixers'], tags:['whisky','champagne']},
+  {n:8, price:2500, items:['1 x Belvedere 3L','1 x Don Julio 1942','1 x Moet Chandon','12 x Red Bull','Unlimited mixers'], tags:['tequila','champagne']},
+  {n:9, price:3000, items:['1 x Belvedere 6L','1 x Jagermeister','24 x Red Bull','Unlimited mixers','Shots on arrival'], tags:['shots']},
+  {n:10, price:3500, items:['1 x Belvedere 6L','1 x 1800 Coconut Tequila','1 x Wet Cat','12 x Red Bull','Unlimited mixers','Shots on arrival'], tags:['tequila','shots']},
+  {n:11, price:6000, items:['1 x Belvedere 6L','1 x Chivas Regal 18yr','1 x Patron Silver','1 x Wet Cat','2 x Ace of Spades','24 x Red Bull','Unlimited mixers'], tags:['whisky','tequila','champagne']},
+  {n:12, price:10000, items:['1 x Belvedere 6L','1 x Johnnie Walker Blue','1 x Patron Silver','1 x Hendricks Gin','2 x Ace of Spades','2 x Louis Roederer Cristal','1 x Louis Roederer Cristal Rose','48 x Red Bull','Unlimited mixers'], tags:['whisky','tequila','gin','champagne']}
+];
+
+const BEDROOM_PACKAGES = TEMPO_PACKAGES.map(p => {
+  if (p.n === 10) return {n:10, price:3500, items:['1 x Belvedere 6L','1 x Patron Silver','1 x Dom Perignon','10 x Wet Pussy shots','12 x Red Bull','Unlimited mixers','Shots on arrival'], tags:['tequila','champagne','shots']};
+  if (p.n === 12) return {n:12, price:10000, items:['1 x Belvedere 6L','1 x Ciroc 3L','1 x Johnnie Walker Blue','1 x Patron Silver','1 x Hendricks Gin','2 x Ace of Spades','2 x Louis Roederer Cristal','1 x Louis Roederer Cristal Rose','48 x Red Bull','Unlimited mixers'], tags:['whisky','tequila','gin','champagne','vodka']};
+  return p;
+});
+
+const HAVANA_PACKAGES = [
+  {n:1, price:1000, items:['1 x Belvedere 700ml','1 x Hennessy VSOP','3 x unlimited mixers','Shots on arrival'], tags:['cognac','shots']},
+  {n:2, price:1000, items:['2 x Belvedere 700ml','1 x Alize 750ml','3 x unlimited mixers'], tags:['vodka']},
+  {n:3, price:1500, items:['1 x Belvedere 1.75L','1 x Patron Silver','6 x Red Bull','4 x unlimited mixers'], tags:['tequila']},
+  {n:4, price:1500, items:['1 x Belvedere 1.75L','2 x Alize 750ml','4 x unlimited mixers','Shots on arrival'], tags:['shots']},
+  {n:5, price:2000, items:['1 x Belvedere 3L','1 x Patron Silver','6 x Red Bull','Unlimited mixers','Shots on arrival'], tags:['tequila','shots']},
+  {n:6, price:2000, items:['1 x Belvedere 1.75L','2 x Hennessy VSOP','1 x Moet Chandon','Unlimited mixers'], tags:['cognac','champagne']},
+  {n:7, price:2500, items:['1 x Belvedere 700ml','2 x Hennessy XO','1 x Dom Perignon','Unlimited mixers','Shots on arrival'], tags:['cognac','champagne','shots']},
+  {n:8, price:2500, items:['1 x Belvedere 3L','1 x Fireball 700ml','1 x Jagermeister 700ml','1 x Veuve Clicquot','Unlimited mixers','Shots on arrival'], tags:['shots','champagne']},
+  {n:9, price:3000, items:['1 x Belvedere 6L','1 x Alize 750ml','1 x Veuve Clicquot','12 x Red Bull','Unlimited mixers','Shots on arrival'], tags:['champagne','shots']},
+  {n:10, price:3000, items:['1 x Belvedere 6L','1 x 1800 Coconut Tequila','1 x Wet Cat','12 x Red Bull','Unlimited mixers','Shots on arrival'], tags:['tequila','shots']},
+  {n:11, price:5000, items:['1 x Belvedere 6L','1 x Ciroc 3L','1 x Fireball 700ml','1 x Patron Silver','1 x Veuve Clicquot','24 x Red Bull','Unlimited mixers','Shots on arrival'], tags:['vodka','tequila','champagne','shots']},
+  {n:12, price:7500, items:['1 x Belvedere 6L','1 x Ciroc 3L','1 x Fireball 700ml','1 x Jagermeister 700ml','1 x Wet Cat','2 x Ace of Spades','48 x Red Bull','Unlimited mixers'], tags:['vodka','champagne','shots']}
+];
+
+const TAX_OFFICE_PACKAGES = [
+  {n:1, price:750, items:['1 x Belvedere 700ml','1 x Veuve Clicquot 750ml','10 x arrival shots','3 x mixers'], tags:['champagne','shots']},
+  {n:2, price:1000, items:['2 x Belvedere 700ml','1 x Veuve Clicquot 750ml','3 x mixers'], tags:['champagne','vodka']},
+  {n:3, price:1000, items:['1 x Belvedere 700ml','1 x Volcan Blanco tequila','1 x Wet Cat','3 x mixers'], tags:['tequila']},
+  {n:4, price:1250, items:['1 x Belvedere 1.75L','1 x Veuve Clicquot 750ml','1 x Wet Cat','3 x mixers'], tags:['champagne']},
+  {n:5, price:1500, items:['1 x Belvedere 1.75L','1 x Veuve Clicquot 1.5L','10 x arrival shots','3 x mixers'], tags:['champagne','shots']},
+  {n:6, price:2000, items:['1 x Belvedere 3L','1 x Veuve Clicquot 750ml','1 x Wet Cat','6 x Red Bull','3 x mixers'], tags:['champagne']},
+  {n:7, price:2000, items:['1 x Belvedere 3L','1 x Fireball','1 x Wet Cat','6 x Red Bull','3 x mixers'], tags:['shots']},
+  {n:8, price:2500, items:['1 x Belvedere 3L','1 x Don Julio 1942','1 x Veuve Clicquot 750ml','6 x Red Bull','3 x mixers'], tags:['tequila','champagne']},
+  {n:9, price:3000, items:['1 x Belvedere 6L','1 x Jagermeister','15 x arrival shots','12 x Red Bull','3 x mixers'], tags:['shots']},
+  {n:10, price:3500, items:['1 x Belvedere 6L','1 x Veuve Clicquot 1.5L','1 x Wet Cat','12 x Red Bull','3 x mixers'], tags:['champagne']},
+  {n:11, price:5000, items:['1 x Belvedere 6L','1 x Ace of Spades 750ml','1 x Don Julio 1942','20 x arrival shots','12 x Red Bull','3 x mixers'], tags:['champagne','tequila','shots']},
+  {n:12, price:7500, items:['1 x Belvedere 6L','1 x Ace of Spades 1.5L','1 x Clase Azul','20 x arrival shots','12 x Red Bull','3 x mixers'], tags:['champagne','tequila','shots']}
+];
+
+const CALI_STD = ['Selected mixers while the bottle is poured','Complimentary food package','Bottles of water for everyone'];
+const CALI_PACKAGES = [
+  {n:1, price:750, items:['1 x Belvedere 700ml','1 x Veuve Clicquot 750ml','1 x 2L shared cocktail, Cali\'s choice','6 x Red Bull'].concat(CALI_STD), tags:['champagne','cocktail']},
+  {n:2, price:750, items:['1 x Belvedere 700ml','1 x Veuve Clicquot 750ml','1 x 3L beer tower','6 x Red Bull'].concat(CALI_STD), tags:['champagne','beer']},
+  {n:3, price:1000, items:['2 x Belvedere 700ml','1 x Veuve Clicquot 750ml','6 x Red Bull'].concat(CALI_STD), tags:['champagne','vodka']},
+  {n:4, price:1250, items:['1 x Belvedere 1.75L','1 x 3L beer tower','1 x custom Cali cocktail jug','6 x Red Bull'].concat(CALI_STD), tags:['beer','cocktail']},
+  {n:5, price:1250, items:['1 x Belvedere 1.75L','1 x Wet Cat 750ml','6 x Red Bull'].concat(CALI_STD), tags:['vodka','shots']},
+  {n:6, price:1500, items:['1 x Belvedere 1.75L','1 x Veuve Clicquot 750ml','2 x 3L beer towers','6 x Red Bull'].concat(CALI_STD), tags:['champagne','beer']},
+  {n:7, price:1500, items:['1 x Belvedere 1.75L','1 x Veuve Clicquot 750ml','1 x 2L cocktail tower','12 x Wet Cat shots','6 x Red Bull'].concat(CALI_STD), tags:['champagne','cocktail','shots']},
+  {n:8, price:2000, items:['1 x Belvedere 1.75L','1 x 1800 Coconut tequila','2 x Veuve Clicquot 750ml','1 x 2L shared cocktail, Cali\'s choice','12 x Red Bull'].concat(CALI_STD), tags:['tequila','champagne','cocktail']},
+  {n:9, price:2000, items:['1 x Belvedere 1.75L','2 x Wet Cat 750ml','2 x Veuve Clicquot 750ml','1 x 2L shared cocktail, Cali\'s choice','12 x Red Bull'].concat(CALI_STD), tags:['champagne','shots','cocktail']},
+  {n:10, price:2500, items:['1 x Belvedere 3L','1 x Veuve Clicquot magnum 1.5L','1 x 2L shared cocktail, Cali\'s choice','2 x 3L beer towers','12 x seltzer cans','6 x Red Bull'].concat(CALI_STD), tags:['champagne','beer','cocktail']},
+  {n:11, price:3500, items:['1 x Belvedere 3L','2 x 1800 Coconut tequila','1 x Jack Daniels 700ml','1 x Veuve Clicquot magnum 1.5L','1 x 2L shared cocktail, Cali\'s choice','12 x Red Bull'].concat(CALI_STD), tags:['tequila','whisky','champagne']},
+  {n:12, price:5000, items:['1 x Belvedere 6L','1 x Dom Perignon 1.5L','1 x 3L beer tower','3 x 2L shared cocktails','24 x Red Bull'].concat(CALI_STD), tags:['champagne','beer','cocktail']},
+  {n:13, price:5000, items:['1 x Belvedere 6L','3 x Veuve Clicquot 750ml','1 x Volcan De Mi Tierra Cristalino Anejo','1 x Volcan De Mi Tierra Blanco','2 x 3L beer towers','2 x 2L shared cocktails','24 x Red Bull'].concat(CALI_STD), tags:['champagne','tequila','beer']}
+];
+
+const VENUES = {
+  tempo: {
+    id:'tempo', name:'Tempo', fullName:'TEMPO Nightclub', area:'Surfers Paradise',
+    address:'3173 Surfers Paradise Blvd, Surfers Paradise', phone:'07 5619 8192', web:'tempoclub.au',
+    hours:'Friday 10pm to 6am, Saturday 10pm to 7am', hoursLine:'Doors open 10pm Friday and Saturday, running to 6am Friday and 7am Saturday.',
+    vibe:'Latin house and techno. 350 capacity, five VIP booths plus a private Lounge Bar for bigger groups.',
+    days:{fri:'Friday', sat:'Saturday'}, closedNote:'Tempo only runs Fridays and Saturdays.',
+    checkIn:'11pm',
+    rules:[
+      'Booths must be checked in before 11pm or the booking can be released.',
+      'Two 700ml bottles give two hours of bottle service. A 1.75L bottle or bigger gives three hours or more.',
+      'Minimum spend goes on bottle service. A 5 percent staff gratuity is added on top of every booth booking.',
+      'Online payments carry a 2.1 percent card surcharge. Public holidays carry a 15 percent surcharge.',
+      'Extra guests above the booth capacity need a priority entry each.',
+      'Date changes need 96 hours notice. No shows and cancellations inside 96 hours forfeit the booking. Minimum spends are non refundable.',
+      'Card used for the booking must be shown on the night. Everyone needs valid photo ID and must be 18 or over.',
+      'Head tattoos, offensive or gang related tattoos are not accepted. Suitable footwear required.',
+      'Birthday benefits: free entry for the birthday person and up to 10 friends between 10pm and 12am, everyone in by 11pm.',
+      'Always check the website pricing for special events.'
+    ],
+    booths:[
+      {id:'b1', name:'Booth 1', cap:10, rank:3, blurb:'raised with direct views over the whole venue, it is the first booth you see walking in', prices:{fri:750, sat:750}},
+      {id:'b2', name:'Booth 2', cap:10, rank:4, blurb:'in the centre of the elevated landing overlooking the dance floor, DJ booth and podiums', prices:{fri:750, sat:750}},
+      {id:'b3', name:'Booth 3', cap:10, rank:5, blurb:'right next to the DJ booth and both dance podiums, the most central spot in the club', prices:{fri:750, sat:750}},
+      {id:'b5', name:'Booth 5', cap:10, rank:2, blurb:'raised and next to the DJ booth with easy access to the main bar and bathrooms', prices:{fri:750, sat:750}},
+      {id:'b4', name:'Booth 4', cap:15, rank:6, blurb:'the largest booth, right beside the DJ booth with its own dance podium', prices:{}, enquiry:true},
+      {id:'lounge', name:'Lounge Bar', cap:25, rank:7, blurb:'an elevated private area with its own bar and bartender', prices:{}, enquiry:true}
+    ],
+    packages: TEMPO_PACKAGES, bottles: NIGHTCLUB_BOTTLES, houseVodka:'Belvedere', vodkaPrice:400
+  },
+  bedroom: {
+    id:'bedroom', name:'Bedroom', fullName:'Bedroom Lounge Bar', area:'Surfers Paradise',
+    address:'26 Orchid Ave, Surfers Paradise', phone:'07 5619 8192', web:'bedroomgc.au',
+    hours:'9pm to 3am every night', hoursLine:'Doors open 9pm every night of the week and close at 3am.',
+    vibe:'House to EDM, podium dancers and the most Instagrammed decor on the coast. 525 capacity, 8 booths including the King Sized Bed.',
+    days:{monthu:'weeknight', fri:'Friday', sat:'Saturday', sun:'Sunday'}, closedNote:'',
+    checkIn:'11pm',
+    rules:[
+      'Booths must be checked in before 11pm or the booking can be released.',
+      'Two 700ml bottles give two hours of bottle service. A 1.75L bottle or bigger gives three hours or more.',
+      'Minimum spend goes on bottle service. A 5 percent staff gratuity is added on top of every booth booking.',
+      'Online payments carry a 2.1 percent card surcharge. Public holidays carry a 15 percent surcharge.',
+      'Extra guests above the booth capacity need a priority entry each.',
+      'Date changes need 96 hours notice. No shows and cancellations inside 96 hours forfeit the booking. Minimum spends are non refundable.',
+      'Card used for the booking must be shown on the night. Everyone needs valid photo ID and must be 18 or over.',
+      'Head tattoos, offensive or gang related tattoos are not accepted. Suitable footwear required.',
+      'Booth 8 is only priced for Friday and Saturday.',
+      'Always check the website pricing for special events.'
+    ],
+    booths:[
+      {id:'b1', name:'Booth 1', cap:10, rank:4, blurb:'the first booth you see through the front doors, overlooking the main dance floor and DJ booth with the main bar a few steps away', prices:{monthu:600, fri:1200, sat:1500, sun:800}},
+      {id:'b2', name:'Booth 2', cap:10, rank:2, blurb:'on the left side of the King Sized Bed overlooking the dance floor, DJ booth and podiums', prices:{monthu:450, fri:1000, sat:1250, sun:600}},
+      {id:'b3', name:'Booth 3', cap:10, rank:2, blurb:'on the right side of the King Sized Bed with the same views over the dance floor', prices:{monthu:450, fri:1000, sat:1250, sun:600}},
+      {id:'b23', name:'Booth 2 and 3, the Belvedere Bed', cap:20, rank:6, blurb:'the King Sized Bed, our biggest and most popular booth, right over the dance floor', prices:{monthu:900, fri:2000, sat:2500, sun:1200}},
+      {id:'b4', name:'Booth 4', cap:10, rank:5, blurb:'one of our most popular, directly over the dance floor and DJ with a front row view of the podiums', prices:{monthu:600, fri:1200, sat:1500, sun:800}},
+      {id:'b5', name:'Booth 5', cap:10, rank:3, blurb:'overlooking the dance podiums and dance floor', prices:{monthu:600, fri:1200, sat:1500, sun:800}},
+      {id:'b6', name:'Booth 6', cap:8, rank:1, blurb:'above the dance floor with direct access to the VIP bar', prices:{monthu:400, fri:850, sat:950, sun:550}},
+      {id:'b7', name:'Booth 7', cap:15, rank:3, blurb:'a spacious couch booth beside the VIP bar, good for bigger groups', prices:{monthu:400, fri:1200, sat:1500, sun:550}},
+      {id:'b8', name:'Booth 8', cap:10, rank:2, blurb:'a spacious couch booth beside the VIP bar under the XOXO neon', prices:{fri:950, sat:1200}}
+    ],
+    packages: BEDROOM_PACKAGES, bottles: NIGHTCLUB_BOTTLES, houseVodka:'Belvedere', vodkaPrice:400
+  },
+  havana: {
+    id:'havana', name:'Havana', fullName:'Havana RnB Nightclub', area:'Surfers Paradise',
+    address:'26 Orchid Ave, Surfers Paradise', phone:'07 5619 8196', web:'havanarnb.com.au',
+    hours:'Friday and Saturday 9pm to 3am, plus long weekends and special events', hoursLine:'Doors open 9pm Friday and Saturday and close at 3am, plus long weekends and special events.',
+    vibe:'Hip hop and RnB with regular guest DJs and live shows. 480 capacity, six VIP booths over the dance floor.',
+    days:{fri:'Friday', sat:'Saturday'}, closedNote:'Havana runs Fridays and Saturdays, plus long weekends and special events.',
+    checkIn:'11pm',
+    rules:[
+      'Booths must be checked in before 11pm or the booking can be released.',
+      'Two 700ml bottles give two hours of bottle service. A 1.75L bottle or bigger gives three hours or more.',
+      'Minimum spend goes on bottle service. A 5 percent staff gratuity is added on top of every booth booking.',
+      'Online payments carry a 2.1 percent card surcharge. Public holidays carry a 15 percent surcharge.',
+      'Extra guests above the booth capacity need a priority entry each.',
+      'Date changes need 96 hours notice. No shows and cancellations inside 96 hours forfeit the booking. Minimum spends are non refundable.',
+      'Card used for the booking must be shown on the night. Everyone needs valid photo ID and must be 18 or over.',
+      'Booth 5 is enquiry only and is not on the website.',
+      'Always check the website pricing for special events.'
+    ],
+    booths:[
+      {id:'b1', name:'Booth 1', cap:12, rank:6, blurb:'right next to the DJ booth with views of the whole venue, our most in demand booth', prices:{fri:1000, sat:1500}},
+      {id:'b2', name:'Booth 2', cap:10, rank:4, blurb:'elevated just left of the DJ booth, front and centre to the action', prices:{fri:950, sat:1200}},
+      {id:'b3', name:'Booth 3', cap:12, rank:5, blurb:'elevated above every other booth with the best views in the club', prices:{fri:1000, sat:1500}},
+      {id:'b34', name:'Booth 3 and 4', cap:20, rank:7, blurb:'the two best booths joined into one big area with views of the DJ, both bars and the dance floor', prices:{fri:2000, sat:2500}},
+      {id:'b4', name:'Booth 4', cap:8, rank:2, blurb:'right beside the VIP bar, ideal for a smaller group that wants to dance all night', prices:{fri:800, sat:950}},
+      {id:'b5', name:'Booth 5', cap:15, rank:3, blurb:'the largest booth, elevated over the dance floor with room to dance', prices:{fri:900, sat:1050}, enquiry:true},
+      {id:'b6', name:'Booth 6', cap:10, rank:1, blurb:'tucked away by the main bar for a more relaxed night', prices:{fri:850, sat:1000}}
+    ],
+    packages: HAVANA_PACKAGES, bottles: NIGHTCLUB_BOTTLES, houseVodka:'Belvedere', vodkaPrice:400
+  },
+  taxoffice: {
+    id:'taxoffice', name:'Tax Office', fullName:'The Tax Office', area:'Fortitude Valley, Brisbane',
+    address:'740 Ann Street, Fortitude Valley', phone:'07 3184 6762', web:'thetaxoffice.au',
+    hours:'Friday and Saturday 6pm to 3am, late night from 10pm', hoursLine:'The venue opens 6pm Friday and Saturday, late night kicks off at 10pm and runs to 3am.',
+    vibe:'Brisbane late night under the gold disco balls. Commercial house, disco and funky house. Seven VIP booths, a mezzanine and the Tax Booths.',
+    days:{fri:'Friday', sat:'Saturday'}, closedNote:'Tax Office late night booths run Fridays and Saturdays.',
+    checkIn:'the time on the confirmation',
+    rules:[
+      'Guests must check in before the time on the booking confirmation or the booth can be released.',
+      'Minimum spend goes on bottle service. A 5 percent staff gratuity is added on top of the minimum spend.',
+      'Card and matching photo ID of the cardholder must be shown at check in. Everyone needs valid photo ID and must be 18 or over.',
+      'A variable card surcharge applies. Public holidays carry a 15 percent surcharge and Sundays a 10 percent surcharge.',
+      'Date changes need 96 hours notice. No shows and cancellations inside 96 hours forfeit the booking. All sales are final.',
+      'Smart casual dress. No singlets, thongs, sports or athletic wear, board shorts, offensive prints, see through clothing, chains, baggy clothing or hard soled shoes.',
+      'No neck, hand, face or offensive tattoos. Sleeve tattoos need a long sleeve shirt.',
+      'The Tax Booths are available Friday and Saturday from 9pm, as two booths of 8 to 10 or one of 20, pricing on enquiry.',
+      'Functions over 10 people in a private area carry a 10 percent gratuity and a 20 percent deposit.',
+      'Always check the website pricing for special events.'
+    ],
+    booths:[
+      {id:'b1', name:'Booth 1, the Bar Booth', cap:12, rank:4, blurb:'right beside the bar in a prime spot to watch the whole room', prices:{fri:1500, sat:2000}},
+      {id:'b2', name:'Booth 2, the Late Night Lounge', cap:12, rank:3, blurb:'at the gateway to the late night action', prices:{fri:1500, sat:2000}},
+      {id:'b3', name:'Booth 3, the Dancefloor Booth', cap:12, rank:6, blurb:'elevated above the dance floor with direct views of the DJ', prices:{fri:1500, sat:2000}},
+      {id:'b4', name:'Booth 4, the Dancefloor Lounge', cap:10, rank:5, blurb:'elevated above the dance floor, a good fit for 8 to 10', prices:{fri:1500, sat:2000}},
+      {id:'b5', name:'Booth 5, the DJ Booth', cap:12, rank:2, blurb:'perched right next to the DJ decks', prices:{fri:1250, sat:1750}},
+      {id:'b6', name:'Booth 6, the Balcony Booth', cap:6, rank:1, blurb:'our most intimate booth up on the mezzanine, overlooking the action', prices:{fri:900, sat:1200}},
+      {id:'b7', name:'Booth 7, the Balcony Suite', cap:12, rank:5, blurb:'a private suite on the mezzanine overlooking the dance floor and bar', prices:{fri:1500, sat:2000}},
+      {id:'b67', name:'Booth 6 and 7, the Mezzanine', cap:25, rank:7, blurb:'the whole mezzanine level to yourselves, the best position in the house', prices:{fri:2500, sat:4000}},
+      {id:'b45', name:'Booth 4 and 5, the Premium Dance Floor Booth', cap:25, rank:6, blurb:'two of the most popular booths combined at the DJ and dance floor doorstep', prices:{}, enquiry:true},
+      {id:'tax', name:'The Tax Booths', cap:20, rank:4, blurb:'the restaurant booths from 9pm, as two booths of 8 to 10 or one of 20', prices:{}, enquiry:true}
+    ],
+    packages: TAX_OFFICE_PACKAGES, bottles: TAX_OFFICE_BOTTLES, houseVodka:'Belvedere', vodkaPrice:400
+  },
+  cali: {
+    id:'cali', name:'Cali Beach', fullName:'Cali Beach', area:'Surfers Paradise',
+    address:'Level 4, 3197 Surfers Paradise Blvd, Surfers Paradise', phone:'07 5620 1024', web:'calibeach.com.au',
+    hours:'Friday night 5pm to close, Saturday day 12pm to 6pm, Saturday night 7pm to close, Sunday session 12pm to close', hoursLine:'Sessions are Friday night from 5pm, Saturday day 12pm to 6pm, Saturday night from 7pm and the Sunday session from 12pm.',
+    vibe:'Rooftop beach club with pools, cabanas, daybeds and booths. Day sessions 12pm to 6pm, night sessions 7pm to close.',
+    days:{fri:'Friday night', satday:'Saturday day', satnight:'Saturday night', sun:'Sunday session'}, closedNote:'Cali Beach bookings run Friday night, Saturday day and night, and Sunday sessions.',
+    checkIn:'1pm for day sessions and 8pm for night sessions',
+    seasonal:true,
+    rules:[
+      'Day bookings run 12pm to 6pm and must be checked in by 1pm. Night bookings run 7pm to close and must be checked in by 8pm.',
+      'Minimum spend goes on food and bottle service, standard mixers, juices and sodas included. A 5 percent staff gratuity is added on top.',
+      'Every booth and cabana booking must choose a bottle service option or a package, and must include some food.',
+      'Online payments carry a 2.1 percent card surcharge. Public holidays carry a 15 percent surcharge.',
+      'Booths include express VIP entry with a host escort, a personal waitress and beach towels for everyone.',
+      'Daybeds come with a welcome pack rather than a minimum spend. Bottle service on a deck daybed needs an extra $1000 spend arranged 48 hours ahead.',
+      'Extra guests above the booking capacity need an express entry each.',
+      'Date changes need 96 hours notice. No shows and cancellations inside 96 hours forfeit the booking. Minimum spends are non refundable.',
+      'Smart casual dress, think European summer. No ripped or dirty clothing, hard capped shoes, sports team apparel or fancy dress.',
+      'Head, face and hand tattoos are not permitted without prior approval. No outside towels.',
+      'Winter pricing runs April to August, spring and summer pricing September to March.',
+      'Always check the website pricing for special events.'
+    ],
+    booths:[
+      {id:'deckbed', name:'Deck Daybed', cap:6, rank:0, type:'daybed', blurb:'an exclusive daybed on the upper deck with a welcome pack of a bottle of Chandon, seltzers and a food platter', prices:{winter:{fri:150, satday:400, satnight:250, sun:300}, summer:{fri:150, satday:500, satnight:250, sun:400}}},
+      {id:'poolbed', name:'Poolside Daybed', cap:6, rank:0, type:'daybed', blurb:'a daybed right on the edge of the pool with a welcome pack of a bottle of Veuve, seltzers and a food platter', prices:{winter:{fri:250, satday:450, satnight:250, sun:350}, summer:{fri:250, satday:550, satnight:250, sun:450}}},
+      {id:'deckbooth', name:'Deck Booth', cap:8, rank:2, blurb:'an elevated booth overlooking the whole venue with your own VIP area to retreat to', prices:{winter:{fri:750, satday:1000, satnight:750, sun:750}, summer:{fri:750, satday:1250, satnight:950, sun:1000}}},
+      {id:'lagoon', name:'Lagoon Booth', cap:12, rank:6, blurb:'elevated over the Cali pool with easy access to splash around, one of the most sought after spots', prices:{winter:{fri:750, satday:1500, satnight:1250, sun:750}, summer:{fri:750, satday:2000, satnight:1500, sun:1750}}},
+      {id:'calibooth', name:'Cali Booth', cap:14, rank:4, blurb:'perched above the pool and daybeds in front of the Cali Dreaming mural', prices:{winter:{fri:750, satday:1250, satnight:750, sun:1000}, summer:{fri:750, satday:1500, satnight:1000, sun:1250}}},
+      {id:'premcali', name:'Premium Cali Booth', cap:20, rank:5, blurb:'the bigger Cali Booth above the pool with views over the whole venue', prices:{winter:{fri:1000, satday:1500, satnight:1000, sun:1250}, summer:{fri:1000, satday:1750, satnight:1250, sun:1500}}},
+      {id:'lookout', name:'The Lookout', cap:20, rank:6, blurb:'right above the dance floor with the best view in the house', prices:{winter:{fri:1000, satday:1750, satnight:1500, sun:1250}, summer:{fri:1500, satday:2250, satnight:2000, sun:1750}}},
+      {id:'barbooth', name:'Bar Booth', cap:20, rank:5, blurb:'one of the largest booths, directly opposite the main bar with the pool on one side and the ocean on the other', prices:{winter:{fri:1250, satday:1500, satnight:1250, sun:1250}, summer:{fri:1250, satday:1750, satnight:1500, sun:1500}}},
+      {id:'privpool', name:'Private Pool Booth', cap:20, winterCap:15, rank:7, blurb:'by the main bar with an exclusive daybed and your very own plunge pool', prices:{winter:{fri:1000, satday:1750, satnight:1000, sun:1000}, summer:{fri:1000, satday:2500, satnight:1250, sun:1500}}},
+      {id:'cabana', name:'Cabana', cap:25, rank:8, type:'cabana', blurb:'the most sought after spot at Cali with a dedicated host and service team', prices:{winter:{fri:1750, satday:3000, satnight:2500, sun:2500}, summer:{fri:2000, satday:5000, satnight:2500, sun:3000}}},
+      {id:'grand', name:'Grand Cabana', cap:50, rank:9, type:'cabana', blurb:'the prime spot in the venue with the most amenities of anyone, for up to 50', prices:{winter:{fri:3500, satday:6000, satnight:5000, sun:5000}, summer:{fri:4000, satday:10000, satnight:5000, sun:6000}}}
+    ],
+    packages: CALI_PACKAGES, bottles: CALI_BOTTLES, houseVodka:'Belvedere', vodkaPrice:400,
+    spray:[{qty:15, price:2400, save:300},{qty:30, price:4500, save:900},{qty:50, price:7000, save:2000}]
+  }
+};
+
+const VENUE_ORDER = ['tempo','bedroom','havana','taxoffice','cali'];
+
+/* Queensland public holidays and busy periods, used only to raise a flag */
+const PUBLIC_HOLIDAYS = {
+  '2026-01-01':'New Year\'s Day', '2026-01-26':'Australia Day', '2026-04-03':'Good Friday', '2026-04-04':'Easter Saturday', '2026-04-05':'Easter Sunday', '2026-04-06':'Easter Monday', '2026-04-25':'Anzac Day', '2026-05-04':'Labour Day', '2026-08-12':'Brisbane Ekka holiday', '2026-08-28':'Gold Coast Show Day', '2026-10-05':'King\'s Birthday', '2026-12-25':'Christmas Day', '2026-12-26':'Boxing Day', '2026-12-28':'Boxing Day holiday',
+  '2027-01-01':'New Year\'s Day', '2027-01-26':'Australia Day', '2027-03-26':'Good Friday', '2027-03-27':'Easter Saturday', '2027-03-28':'Easter Sunday', '2027-03-29':'Easter Monday', '2027-04-25':'Anzac Day', '2027-04-26':'Anzac Day holiday', '2027-05-03':'Labour Day', '2027-10-04':'King\'s Birthday', '2027-12-25':'Christmas Day', '2027-12-26':'Boxing Day', '2027-12-27':'Christmas Day holiday', '2027-12-28':'Boxing Day holiday'
+};
+const BUSY_PERIODS = [
+  {from:'11-21', to:'12-06', label:'Schoolies'},
+  {from:'12-24', to:'12-31', label:'Christmas week and New Year\'s Eve'},
+  {from:'01-01', to:'01-01', label:'New Year\'s Day'}
+];
+
+const BRANDS = [
+  {k:'grey goose', cat:'vodka'},{k:'greygoose', cat:'vodka'},{k:'ciroc', cat:'vodka'},{k:'absolut', cat:'vodka'},{k:'smirnoff', cat:'vodka'},{k:'belvedere', cat:'vodka'},{k:'titos', cat:'vodka'},{k:"tito's", cat:'vodka'},
+  {k:'patron', cat:'tequila'},{k:'don julio', cat:'tequila'},{k:'casamigos', cat:'tequila'},{k:'clase azul', cat:'tequila'},{k:'volcan', cat:'tequila'},{k:'cuervo', cat:'tequila'},{k:'1800', cat:'tequila'},
+  {k:'hennessy', cat:'cognac'},{k:'henny', cat:'cognac'},{k:'remy', cat:'cognac'},
+  {k:'moet', cat:'champagne'},{k:'moët', cat:'champagne'},{k:'veuve', cat:'champagne'},{k:'dom perignon', cat:'champagne'},{k:'dom p', cat:'champagne'},{k:'ace of spades', cat:'champagne'},{k:'cristal', cat:'champagne'},{k:'chandon', cat:'champagne'},{k:'krug', cat:'champagne'},{k:'ruinart', cat:'champagne'},
+  {k:'johnnie walker', cat:'whisky'},{k:'johnny walker', cat:'whisky'},{k:'jack daniels', cat:'whisky'},{k:"jack daniel's", cat:'whisky'},{k:'jameson', cat:'whisky'},{k:'chivas', cat:'whisky'},{k:'glenfiddich', cat:'whisky'},{k:'macallan', cat:'whisky'},{k:'jim beam', cat:'whisky'},{k:'makers mark', cat:'whisky'},{k:'wild turkey', cat:'whisky'},
+  {k:'tanqueray', cat:'gin'},{k:'hendricks', cat:'gin'},{k:'bombay', cat:'gin'},{k:'gordons', cat:'gin'},
+  {k:'jager', cat:'shots'},{k:'jäger', cat:'shots'},{k:'fireball', cat:'shots'},{k:'wet cat', cat:'shots'},
+  {k:'malibu', cat:'rum'},{k:'captain morgan', cat:'rum'},{k:'bacardi', cat:'rum'},{k:'bundaberg', cat:'rum'},{k:'bundy', cat:'rum'},{k:'kraken', cat:'rum'},{k:'sailor jerry', cat:'rum'},
+  {k:'corona', cat:'beer'}
+];
+const CATEGORY_WORDS = [
+  {k:'vodka', tag:'vodka'},{k:'tequila', tag:'tequila'},{k:'champagne', tag:'champagne'},{k:'bubbles', tag:'champagne'},{k:'prosecco', tag:'champagne'},{k:'whisky', tag:'whisky'},{k:'whiskey', tag:'whisky'},{k:'bourbon', tag:'whisky'},{k:'gin', tag:'gin'},{k:'rum', tag:'rum'},{k:'cognac', tag:'cognac'},{k:'beer', tag:'beer'},{k:'shots', tag:'shots'},{k:'cocktail', tag:'cocktail'}
+];
+const CATEGORY_ALTERNATIVES = {vodka:'Belvedere', tequila:'Patron Silver', cognac:'Hennessy VSOP', champagne:'Veuve Clicquot', whisky:'Johnnie Walker Black', gin:'Tanqueray', rum:'Captain Morgan', shots:'Fireball', beer:'Corona'};
+
+const OCCASIONS = [
+  {k:/\bhens?\b|bachelorette/i, label:'a hens', short:'hens'},
+  {k:/\bbucks?\b|bachelor\b|stag\b/i, label:'a bucks', short:'bucks'},
+  {k:/\b(18th|19th|20th|21st|25th|30th|40th|50th|60th)\b/i, label:'the birthday', short:'birthday'},
+  {k:/\bbirthday|bday|b'day\b/i, label:'the birthday', short:'birthday'},
+  {k:/\bengagement/i, label:'the engagement', short:'engagement'},
+  {k:/\banniversary/i, label:'the anniversary', short:'anniversary'},
+  {k:/christmas party|xmas party|christmas|xmas/i, label:'the Christmas party', short:'Christmas party'},
+  {k:/end of year|eoy/i, label:'the end of year party', short:'end of year party'},
+  {k:/work party|work do|work function|corporate|staff party|team night|work drinks|office/i, label:'the work function', short:'work function'},
+  {k:/\bfarewell|going away|send off/i, label:'the farewell', short:'farewell'},
+  {k:/\bgraduation|grad\b/i, label:'the graduation', short:'graduation'},
+  {k:/schoolies/i, label:'schoolies', short:'schoolies'}
+];
+
+
+</script>
+<script>
+/* ===== Lead parsing, option logic and message writers ===== */
+
+const ZOHO_LABELS = ['Lead Owner','Email','Phone','Mobile','Lead Status','Contact Information','Last SMS Reply','SMS Sent to lead count','Brevo Lead Source','Birthday Month','Lead Name','Call Back Time','Birthday','Last SMS Delivery Status','Last SMS Received','SMS Received from lead count','Brevo Address','Booking Information','Venue','Occassion','Occasion','Amount','Budget','Booking Type','Booking Date','Date','Function Areas','Booking Areas','Guests','Booking Time','Time','Offers & Promotions','Description Information','Description','Notes','Message','Lead Information','Lead Source','Disposition','Disposition 2','Created By','Campaign Name','Form Name','Company Information','Company','Industry','Website','Annual Revenue','No. of Employees','Address Information','Locate Map','Street','State','Country','City','Zip Code','Visit Summary','First Visit','Referrer','Most Recent Visit','Number Of Chats','Visitor Score','Average Time Spent (Minutes)','First Page Visited','Days Visited','Recent Last','Hide Details','Show Details','Overview','Timeline','Related List','Connected Records','Add Note','Add a note','Send Email','Call','Convert','Edit','Last Update'];
+const LABEL_SET = new Set(ZOHO_LABELS.map(l => l.toLowerCase()));
+const JUNK_RE = /purchase code|plugin integration|wp-admin|elementor-zohocrm/i;
+const MONTHS = ['january','february','march','april','may','june','july','august','september','october','november','december'];
+const DAY_NAMES = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+function clean(s){ return (s || '').replace(/\s+/g, ' ').trim(); }
+function fmtMoney(n){ if (n == null || isNaN(n)) return ''; return '$' + Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
+function cap(s){ return s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
+function lower(s){ return s ? s.charAt(0).toLowerCase() + s.slice(1) : s; }
+function ymd(d){ return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
+function fmtDate(d){ if (!d) return ''; return DAY_NAMES[d.getDay()] + ' ' + d.getDate() + ' ' + cap(MONTHS[d.getMonth()]); }
+function fmtDateShort(d){ if (!d) return ''; return d.getDate() + '/' + (d.getMonth()+1) + '/' + d.getFullYear(); }
+function joinList(arr){
+  const a = arr.filter(Boolean);
+  if (a.length === 0) return '';
+  if (a.length === 1) return a[0];
+  return a.slice(0, -1).join(', ') + ' and ' + a[a.length-1];
+}
+function detectVenue(text){
+  const t = (text || '').toLowerCase();
+  if (/tempo/.test(t)) return 'tempo';
+  if (/tax office|taxoffice|the tax/.test(t)) return 'taxoffice';
+  if (/havana/.test(t)) return 'havana';
+  if (/bedroom/.test(t)) return 'bedroom';
+  if (/cali/.test(t)) return 'cali';
+  return null;
+}
+
+/* ---------- date parsing ---------- */
+function parseDateString(raw, today){
+  if (!raw) return null;
+  const s = raw.trim();
+  let m;
+  m = s.match(/(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{2,4})/);
+  if (m){
+    let y = parseInt(m[3],10); if (y < 100) y += 2000;
+    const d = new Date(y, parseInt(m[2],10)-1, parseInt(m[1],10));
+    if (!isNaN(d)) return d;
+  }
+  m = s.match(/(\d{4})-(\d{2})-(\d{2})/);
+  if (m){ const d = new Date(parseInt(m[1],10), parseInt(m[2],10)-1, parseInt(m[3],10)); if (!isNaN(d)) return d; }
+  const monthRe = '\\b(jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:t|tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\\b';
+  m = s.match(new RegExp('(\\d{1,2})(?:st|nd|rd|th)?\\s*(?:of\\s*)?' + monthRe + '(?:\\s*,?\\s*(\\d{4}))?', 'i'));
+  let day = null, mon = null, year = null;
+  if (m){ day = parseInt(m[1],10); mon = MONTHS.findIndex(x => x.startsWith(m[2].toLowerCase().slice(0,3))); year = m[3] ? parseInt(m[3],10) : null; }
+  else {
+    m = s.match(new RegExp(monthRe + '\\s*(\\d{1,2})(?:st|nd|rd|th)?(?:\\s*,?\\s*(\\d{4}))?', 'i'));
+    if (m){ mon = MONTHS.findIndex(x => x.startsWith(m[1].toLowerCase().slice(0,3))); day = parseInt(m[2],10); year = m[3] ? parseInt(m[3],10) : null; }
+  }
+  if (day && mon >= 0){
+    const base = today || new Date();
+    if (!year){
+      year = base.getFullYear();
+      const cand = new Date(year, mon, day);
+      if (cand < new Date(base.getFullYear(), base.getMonth(), base.getDate())) year += 1;
+    }
+    const d = new Date(year, mon, day);
+    if (!isNaN(d)) return d;
+  }
+  return null;
+}
+
+/* ---------- times ---------- */
+function parseTimes(text){
+  const out = [];
+  const re = /\b(\d{1,2})(?:[:.](\d{2}))?\s*(am|pm)\b/gi;
+  let m;
+  while ((m = re.exec(text || ''))){
+    let h = parseInt(m[1],10); const min = m[2] ? parseInt(m[2],10) : 0; const ap = m[3].toLowerCase();
+    if (h > 12) continue;
+    if (ap === 'pm' && h < 12) h += 12;
+    if (ap === 'am' && h === 12) h = 0;
+    out.push({h, min, label: m[0].replace(/\s+/g,'').toLowerCase()});
+  }
+  const re2 = /\b(?:at|from|around|about|by)\s+(\d{1,2})(?:[:.](\d{2}))?\s*(?:o'?clock)?\b(?!\s*(?:am|pm|people|guests|pax|of|ppl|\d))/gi;
+  while ((m = re2.exec(text || ''))){
+    let h = parseInt(m[1],10); const min = m[2] ? parseInt(m[2],10) : 0;
+    if (h >= 1 && h <= 12){ if (h <= 6) h += 12; out.push({h, min, label: m[1] + (m[2] ? ':' + m[2] : '') + (h >= 12 ? 'pm' : 'am'), guessed:true}); }
+  }
+  return out;
+}
+/* minutes after 6pm so midnight sorts after 11pm */
+function nightMinutes(t){ let h = t.h; if (h < 12) h += 24; return (h - 18) * 60 + t.min; }
+
+/* ---------- occasions, brands ---------- */
+function detectOccasion(text){
+  for (const o of OCCASIONS){ if (o.k.test(text || '')) return o; }
+  return null;
+}
+function detectPrefs(text, venue){
+  const t = (text || '').toLowerCase();
+  const brands = [], tags = new Set();
+  for (const b of BRANDS){
+    if (t.includes(b.k)){
+      const pretty = b.k.replace(/\b\w/g, c => c.toUpperCase()).replace('Greygoose','Grey Goose').replace("Jack Daniel's",'Jack Daniels').replace('Dom P','Dom Perignon').replace('Henny','Hennessy').replace('Jager','Jagermeister').replace('Jäger','Jagermeister').replace('Bundy','Bundaberg').replace('Johnny Walker','Johnnie Walker');
+      const pl = pretty.toLowerCase();
+      const hit = x => x.toLowerCase().includes(b.k) || x.toLowerCase().includes(pl);
+      const stocked = venue ? venue.bottles.some(x => hit(x.name)) || venue.packages.some(p => p.items.some(i => hit(i))) : true;
+      const display = venue ? venue.bottles.find(x => hit(x.name)) || null : null;
+      if (!brands.some(x => x.k === b.k) && !brands.some(x => x.name === pretty)) brands.push({k:b.k, name: pretty, cat:b.cat, stocked, price: display ? display.price : null});
+      tags.add(b.cat);
+    }
+  }
+  for (const c of CATEGORY_WORDS){ if (new RegExp('\\b' + c.k + 's?\\b').test(t)) tags.add(c.tag); }
+  return {brands, tags:[...tags]};
+}
+
+/* ---------- guests, budget ---------- */
+function guestsFromText(text){
+  const t = text || '';
+  let m = t.match(/\b(\d{1,3})\s*(?:people|peeps|guests|pax|ppl|persons|of us|heads|girls|boys|mates|friends|ladies|lads|adults)\b/i);
+  if (m) return parseInt(m[1],10);
+  m = t.match(/\b(?:group|party|table|booth|booking)\s+(?:of|for)\s+(?:about|around|roughly|approx\.?|maybe)?\s*(\d{1,3})\b/i);
+  if (m) return parseInt(m[1],10);
+  m = t.match(/\b(?:there(?:'s| is| will be| are)|we are|we're|us)\s+(?:about|around|roughly|maybe)?\s*(\d{1,3})\b/i);
+  if (m) return parseInt(m[1],10);
+  m = t.match(/\b(?:for|with)\s+(?:about|around|roughly|approx\.?|maybe)?\s*(\d{1,3})\b(?!\s*(?:am|pm|hours|hrs|pm|years|th|st|nd|rd|\$|dollars|bottles|%|percent|k\b))/i);
+  if (m && parseInt(m[1],10) <= 200) return parseInt(m[1],10);
+  return null;
+}
+function budgetFromText(text){
+  const t = text || '';
+  const amounts = [];
+  const re = /\$\s?(\d[\d,]*(?:\.\d+)?)\s*(k)?/gi;
+  let m;
+  while ((m = re.exec(t))){ let n = parseFloat(m[1].replace(/,/g,'')); if (m[2]) n *= 1000; amounts.push(n); }
+  const re2 = /\b(?:budget|spend|spending|looking to spend|around|up to|max|maximum|roughly)\s*(?:of|is|about|around)?\s*\$?\s?(\d[\d,]*)\s*(k)?\b/gi;
+  while ((m = re2.exec(t))){ let n = parseFloat(m[1].replace(/,/g,'')); if (m[2]) n *= 1000; if (n >= 100) amounts.push(n); }
+  if (!amounts.length) return null;
+  return Math.max(...amounts);
+}
+
+/* ---------- Zoho lead sheet parser ---------- */
+function parseLead(text, today){
+  today = today || new Date();
+  const lines = (text || '').split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+  const fields = {};
+  const isLabel = s => LABEL_SET.has(s.toLowerCase());
+  let description = [];
+  for (let i = 0; i < lines.length; i++){
+    const line = lines[i];
+    if (!isLabel(line)) continue;
+    const key = line.toLowerCase();
+    if (key === 'description' || key === 'message'){
+      let j = i + 1;
+      while (j < lines.length && !isLabel(lines[j])){ description.push(lines[j]); j++; }
+      continue;
+    }
+    const next = lines[i+1];
+    if (next && !isLabel(next) && !fields[key]) fields[key] = next;
+  }
+  const junkFound = description.some(l => JUNK_RE.test(l));
+  description = description.filter(l => !JUNK_RE.test(l)).join('\n').trim();
+  const isSheet = Object.keys(fields).length > 2;
+  const freeText = isSheet ? description : (text || '').trim();
+
+  const lead = {};
+  lead.raw = text || '';
+  lead.isSheet = isSheet;
+  lead.description = freeText;
+  lead.junkFound = junkFound;
+  lead.name = clean(fields['lead name'] || '');
+  if (!lead.name){
+    const idx = lines.findIndex(l => l.toLowerCase() === 'send email');
+    if (idx >= 2) lead.name = clean(lines[idx-2]);
+  }
+  lead.firstName = lead.name ? lead.name.split(' ')[0] : '';
+  lead.email = clean(fields['email'] || '');
+  lead.phone = clean(fields['phone'] || fields['mobile'] || '');
+  lead.leadStatus = clean(fields['lead status'] || '');
+  lead.bookingType = clean(fields['booking type'] || '');
+  lead.formName = clean(fields['form name'] || '');
+  lead.venueRaw = clean(fields['venue'] || '');
+  lead.venue = detectVenue(lead.venueRaw) || detectVenue(lead.formName) || detectVenue(freeText) || null;
+  if (!lead.venue && !isSheet) lead.venue = null;
+  lead.occasionRaw = clean(fields['occassion'] || fields['occasion'] || '');
+  const occ = detectOccasion(lead.occasionRaw + ' ' + freeText);
+  lead.occasion = occ ? occ.short : (lead.occasionRaw || '');
+  lead.occasionLabel = occ ? occ.label : (lead.occasionRaw ? 'the ' + lower(lead.occasionRaw) : '');
+  lead.budgetField = parseFloat((fields['amount'] || fields['budget'] || '').replace(/[^0-9.]/g,'')) || null;
+  lead.budgetText = budgetFromText(freeText);
+  lead.budget = lead.budgetField || lead.budgetText || null;
+  lead.guestsField = parseInt((fields['guests'] || '').replace(/[^0-9]/g,''),10) || null;
+  lead.guestsText = guestsFromText(freeText);
+  lead.guests = lead.guestsText || lead.guestsField || null;
+  lead.guestMismatch = !!(lead.guestsField && lead.guestsText && lead.guestsField !== lead.guestsText);
+  lead.dateRaw = clean(fields['booking date'] || fields['date'] || '');
+  lead.date = parseDateString(lead.dateRaw, today) || parseDateString(freeText, today);
+  lead.bookingTime = clean(fields['booking time'] || fields['time'] || '');
+  lead.times = parseTimes(lead.bookingTime + ' ' + freeText);
+  lead.calledNoAnswer = /no answer|left (?:a )?message|voicemail|didn't answer|didnt answer/i.test(text || '') || /no answer/i.test(lead.leadStatus);
+  const v = lead.venue ? VENUES[lead.venue] : null;
+  lead.prefs = detectPrefs(freeText, v);
+  lead.wantsDaybed = /daybed|day bed/i.test(freeText + ' ' + lead.bookingType);
+  lead.nightWords = /\bnight|evening|sunset|after dark|dinner\b/i.test(freeText + ' ' + lead.bookingTime);
+  lead.isFunction = /function|private event|private area|venue hire|whole venue|exclusive use|hire the/i.test(lead.bookingType + ' ' + freeText + ' ' + lead.formName) && !/bottle service/i.test(lead.bookingType);
+  return lead;
+}
+
+/* ---------- session / pricing ---------- */
+function resolveSession(venue, date, opts){
+  opts = opts || {};
+  if (!date) return {open:true, key:null, label:'the night', unknown:true};
+  const wd = date.getDay();
+  if (venue.id === 'cali'){
+    const month = date.getMonth() + 1;
+    const season = (month >= 4 && month <= 8) ? 'winter' : 'summer';
+    if (wd === 5) return {open:true, key:'fri', label:'Friday night', dayWord:'Friday night', season, checkIn:'8pm', window:'5pm to close'};
+    if (wd === 6){
+      const night = opts.caliSession === 'night';
+      return {open:true, key: night ? 'satnight' : 'satday', label: night ? 'Saturday night' : 'Saturday day', dayWord: night ? 'Saturday night' : 'Saturday day session', season, checkIn: night ? '8pm' : '1pm', window: night ? '7pm to close' : '12pm to 6pm', choice:true};
+    }
+    if (wd === 0) return {open:true, key:'sun', label:'Sunday session', dayWord:'Sunday session', season, checkIn:'1pm', window:'12pm to close'};
+    return {open:false, label:DAY_NAMES[wd], season};
+  }
+  if (venue.id === 'bedroom'){
+    if (wd >= 1 && wd <= 4) return {open:true, key:'monthu', label:'weeknight', dayWord:'weeknight'};
+    if (wd === 5) return {open:true, key:'fri', label:'Friday', dayWord:'Friday'};
+    if (wd === 6) return {open:true, key:'sat', label:'Saturday', dayWord:'Saturday'};
+    return {open:true, key:'sun', label:'Sunday', dayWord:'Sunday'};
+  }
+  if (wd === 5) return {open:true, key:'fri', label:'Friday', dayWord:'Friday'};
+  if (wd === 6) return {open:true, key:'sat', label:'Saturday', dayWord:'Saturday'};
+  return {open:false, label:DAY_NAMES[wd]};
+}
+function priceOf(venue, booth, session){
+  if (!session || !session.key) return null;
+  if (venue.seasonal){ const p = booth.prices[session.season]; return p ? (p[session.key] != null ? p[session.key] : null) : null; }
+  return booth.prices[session.key] != null ? booth.prices[session.key] : null;
+}
+function boothCap(venue, booth, session){
+  if (venue.seasonal && session && session.season === 'winter' && booth.winterCap) return booth.winterCap;
+  return booth.cap;
+}
+function holidayInfo(date){
+  if (!date) return null;
+  const key = ymd(date);
+  if (PUBLIC_HOLIDAYS[key]) return {type:'holiday', label:PUBLIC_HOLIDAYS[key]};
+  const md = key.slice(5);
+  for (const p of BUSY_PERIODS){ if (md >= p.from && md <= p.to) return {type:'busy', label:p.label}; }
+  return null;
+}
+
+/* ---------- package choice ---------- */
+function pickPackage(pkgs, price, tags){
+  const same = pkgs.filter(p => p.price === price);
+  if (!same.length) return null;
+  let best = same[0], bestScore = -1;
+  for (const p of same){
+    const score = p.tags.filter(t => (tags || []).includes(t)).length;
+    if (score > bestScore){ best = p; bestScore = score; }
+  }
+  return best;
+}
+function packageAlternatives(pkgs, chosen){ return pkgs.filter(p => p.price === chosen.price && p.n !== chosen.n); }
+
+function buildOptions(lead, opts){
+  opts = opts || {};
+  const venue = VENUES[lead.venue];
+  const out = {venue, flags:[], optionA:null, optionB:null, session:null, handoff:false};
+  if (!venue) return out;
+  const guests = lead.guests || 0;
+  const session = resolveSession(venue, lead.date, opts);
+  out.session = session;
+  const today = opts.today || new Date();
+
+  if (lead.junkFound) out.flags.push({level:'info', text:'The description had the Elementor plugin junk text in it. Ignored it. Flag to Artesian Admin if it keeps showing up.'});
+  if (lead.guestMismatch) out.flags.push({level:'warn', text:'The Guests field says ' + lead.guestsField + ' but the message says ' + lead.guestsText + '. Going with what they wrote.'});
+  if (!lead.guests) out.flags.push({level:'warn', text:'No guest count. Options below assume a small group. Ask for numbers.'});
+  if (!lead.date) out.flags.push({level:'warn', text:'No date found. Add it above to get the right day pricing.'});
+  if (lead.date){
+    const days = Math.round((new Date(lead.date.getFullYear(), lead.date.getMonth(), lead.date.getDate()) - new Date(today.getFullYear(), today.getMonth(), today.getDate())) / 86400000);
+    if (days < 0) out.flags.push({level:'warn', text:'That date has already passed. Check the year or ask what date they meant.'});
+    else if (days <= 2) out.flags.push({level:'warn', text:'Very short notice, ' + (days === 0 ? 'it is tonight' : days === 1 ? 'it is tomorrow' : 'two days away') + '. Get the deposit link out straight away.'});
+    const hol = holidayInfo(lead.date);
+    if (hol && hol.type === 'holiday') out.flags.push({level:'warn', text:hol.label + ' is a public holiday. A 15 percent surcharge applies and pricing may be different on the website, check before quoting.'});
+    if (hol && hol.type === 'busy') out.flags.push({level:'warn', text:'Falls in ' + hol.label + '. Special event pricing may apply, check the website before quoting.'});
+    if (venue.id === 'taxoffice' && lead.date.getDay() === 0 && session.open) out.flags.push({level:'info', text:'Sunday at Tax Office carries a 10 percent surcharge.'});
+  }
+  const bigFit = venue.booths.some(b => !b.enquiry && b.type !== 'daybed' && b.cap >= guests);
+  if (lead.isFunction || (guests >= 30 && !bigFit)){
+    out.handoff = true;
+    out.flags.push({level:'warn', text:(guests >= 30 ? guests + ' guests is a function sized group' : 'This reads as a private function') + '. Hand it to Bonnie. A Teams handoff message is below.'});
+  } else if (guests >= 30){
+    out.flags.push({level:'info', text:guests + ' is a big group. A cabana covers it, but if they want more than that it is a function and belongs with Bonnie.'});
+  }
+  if (lead.prefs.brands.some(b => !b.stocked)){
+    const missing = lead.prefs.brands.filter(b => !b.stocked);
+    out.flags.push({level:'info', text:'They asked about ' + joinList(missing.map(b => b.name)) + ' which ' + (missing.length > 1 ? 'are' : 'is') + ' not stocked here. The messages steer them to ' + joinList([...new Set(missing.map(b => CATEGORY_ALTERNATIVES[b.cat] || venue.houseVodka))]) + '.'});
+  }
+  if (!session.open){
+    out.flags.push({level:'warn', text:fmtDate(lead.date) + ' falls on a day the venue does not run booths. ' + venue.closedNote + (venue.id !== 'bedroom' ? ' Bedroom is open every night if they are set on the date. Friday pricing is shown below in case they move.' : '')});
+  }
+  if (session.unknown) session.key = null;
+
+  // arrival time check
+  const cutoffMin = venue.id === 'cali' ? (session.key === 'satday' || session.key === 'sun' ? (13 - 18) * 60 : (20 - 18) * 60) : (23 - 18) * 60;
+  if (lead.times.length){
+    const first = lead.times.map(nightMinutes).sort((a,b) => a-b)[0];
+    const firstLabel = lead.times.slice().sort((a,b) => nightMinutes(a) - nightMinutes(b))[0].label;
+    if (first > cutoffMin){
+      out.lateArrival = firstLabel;
+      out.flags.push({level:'warn', text:'They want to arrive around ' + firstLabel + '. Check in is ' + (venue.id === 'cali' ? session.checkIn || venue.checkIn : venue.checkIn) + '. The messages flag it.'});
+    }
+  }
+
+  // booths that fit
+  const priced = venue.booths.filter(b => !b.enquiry && priceOf(venue, b, session) != null && (b.type !== 'daybed'));
+  const fitting = priced.filter(b => boothCap(venue, b, session) >= Math.max(guests, 1));
+  const maxCap = Math.max(...venue.booths.map(b => b.cap));
+  if (guests > 0 && !fitting.length && session.key){
+    const enquiryFit = venue.booths.filter(b => b.enquiry && b.cap >= guests);
+    if (enquiryFit.length) out.flags.push({level:'warn', text:'No priced booth holds ' + guests + '. ' + joinList(enquiryFit.map(b => b.name)) + ' could, pricing on enquiry. Messages offer the biggest priced booth plus priority entries for the extras.'});
+    else if (!out.handoff) out.flags.push({level:'warn', text:'No booth holds ' + guests + ', the biggest is ' + maxCap + '. Messages offer the biggest booth plus priority entries, or two booths.'});
+  }
+  if (!session.key){
+    // still give a Friday fallback so Jordy has numbers
+    if (!session.key && lead.date == null){
+      const fallback = resolveSession(venue, nextDay(today, 5), opts);
+      out.session = Object.assign(fallback, {assumed:true});
+      return Object.assign(out, buildBoothOptions(venue, lead, out.session, opts));
+    }
+    if (!session.open){
+      const fallback = resolveSession(venue, nextDay(today, 5), opts);
+      fallback.assumed = true;
+      out.fallbackSession = fallback;
+      Object.assign(out, buildBoothOptions(venue, lead, fallback, opts));
+      return out;
+    }
+    return out;
+  }
+  Object.assign(out, buildBoothOptions(venue, lead, session, opts));
+  return out;
+}
+function nextDay(from, weekday){
+  const d = new Date(from.getFullYear(), from.getMonth(), from.getDate());
+  const diff = (weekday - d.getDay() + 7) % 7 || 7;
+  d.setDate(d.getDate() + diff);
+  return d;
+}
+function buildBoothOptions(venue, lead, session, opts){
+  const guests = lead.guests || 0;
+  const res = {};
+  const priced = venue.booths.filter(b => !b.enquiry && priceOf(venue, b, session) != null && b.type !== 'daybed');
+  let fitting = priced.filter(b => boothCap(venue, b, session) >= Math.max(guests, 1));
+  let extraGuests = 0;
+  if (!fitting.length){ fitting = priced.slice().sort((a,b) => boothCap(venue,b,session) - boothCap(venue,a,session)).slice(0,1); if (fitting.length) extraGuests = guests - boothCap(venue, fitting[0], session); }
+  if (!fitting.length) return res;
+  const sortedCheap = fitting.slice().sort((a,b) => (boothCap(venue,a,session) - boothCap(venue,b,session)) || (priceOf(venue,a,session) - priceOf(venue,b,session)) || (b.rank - a.rank));
+  const boothA = sortedCheap[0];
+  const minA = priceOf(venue, boothA, session);
+  const capLimit = Math.max(guests + 8, Math.ceil(guests * 2), 10);
+  const premiumPool = fitting.filter(b => boothCap(venue, b, session) <= capLimit && b.id !== boothA.id);
+  let boothB = premiumPool.sort((a,b) => (b.rank - a.rank) || (priceOf(venue,b,session) - priceOf(venue,a,session)))[0];
+  if (!boothB || boothB.rank < boothA.rank) boothB = boothA;
+  const minB = priceOf(venue, boothB, session);
+
+  const pkgs = venue.packages.slice().sort((a,b) => a.price - b.price);
+  const tiers = [...new Set(pkgs.map(p => p.price))];
+  const tags = lead.prefs.tags;
+  const budget = lead.budget;
+
+  const tierAtOrAbove = min => tiers.find(t => t >= min);
+  let priceA = tierAtOrAbove(minA);
+  let overflowA = 0;
+  if (priceA == null){ priceA = tiers[tiers.length-1]; overflowA = minA - priceA; }
+  const pkgA = pickPackage(pkgs, priceA, tags);
+
+  let priceB, overflowB = 0;
+  const minTierB = tierAtOrAbove(minB) != null ? tierAtOrAbove(minB) : tiers[tiers.length-1];
+  if (budget && budget >= priceA){
+    const under = tiers.filter(t => t <= budget && t >= minTierB);
+    priceB = under.length ? under[under.length-1] : minTierB;
+    if (priceB <= priceA){ const idx = tiers.indexOf(priceA); priceB = tiers[Math.min(idx + 1, tiers.length-1)]; }
+  } else {
+    const idxA = tiers.indexOf(priceA);
+    priceB = tiers[Math.min(idxA + 2, tiers.length-1)];
+    if (priceB < minTierB) priceB = minTierB;
+  }
+  if (priceB == null) priceB = tiers[tiers.length-1];
+  if (priceB < minB) overflowB = minB - priceB;
+  let pkgB = pickPackage(pkgs, priceB, tags);
+  if (pkgB && pkgA && pkgB.n === pkgA.n){ const alt = packageAlternatives(pkgs, pkgA)[0]; if (alt) pkgB = alt; }
+
+  const g = 0.05;
+  const build = (booth, min, pkg, overflow) => ({
+    booth, minSpend:min, pkg, overflow,
+    spend: Math.max(min, pkg ? pkg.price : min),
+    gratuity: Math.round(Math.max(min, pkg ? pkg.price : min) * g),
+    total: Math.round(Math.max(min, pkg ? pkg.price : min) * (1 + g)),
+    deposit: Math.round(Math.max(min, pkg ? pkg.price : min) * (1 + g) * 0.2),
+    alts: pkg ? packageAlternatives(pkgs, pkg) : [],
+    cap: boothCap(venue, booth, session)
+  });
+  res.optionA = build(boothA, minA, pkgA, overflowA);
+  res.optionB = build(boothB, minB, pkgB, overflowB);
+  if (extraGuests > 0){ res.optionA.extraGuests = extraGuests; res.optionB.extraGuests = extraGuests; res.enquiryBooths = venue.booths.filter(b => b.enquiry && b.cap >= guests); }
+  res.lowestPackage = tiers[0];
+  res.budgetNote = null;
+  if (budget){
+    if (budget < minA) res.budgetNote = 'Their budget of ' + fmtMoney(budget) + ' is under the ' + fmtMoney(minA) + ' minimum spend. Cheapest way in is ' + (venue.id === 'cali' ? 'a daybed or ' : '') + 'a cheaper night.';
+    else if (budget < res.optionA.total) res.budgetNote = 'Budget of ' + fmtMoney(budget) + ' is a touch under Option A with gratuity. Worth mentioning the bottle list to build their own tab.';
+  }
+  // daybed hint for Cali small groups
+  if (venue.id === 'cali' && guests <= 6 && guests > 0){
+    const beds = venue.booths.filter(b => b.type === 'daybed' && priceOf(venue, b, session) != null);
+    res.daybeds = beds.map(b => ({booth:b, price:priceOf(venue, b, session)}));
+  }
+  res.sessionUsed = session;
+  return res;
+}
+
+/* ---------- text helpers for messages ---------- */
+function itemsProse(items){ return joinList(items.map(i => /^\d/.test(i) ? i : lower(i))); }
+function pkgLine(venue, opt){
+  if (!opt || !opt.pkg) return '';
+  const p = opt.pkg;
+  let s = 'Package ' + p.n + ' at ' + fmtMoney(p.price) + ' gets you ' + lower(itemsProse(p.items)) + '.';
+  if (opt.overflow > 0) s += ' The minimum spend for that booth is ' + fmtMoney(opt.minSpend) + ', so the other ' + fmtMoney(opt.overflow) + ' sits on your tab for more bottles' + (venue.id === 'cali' ? ' or food' : '') + ' on the ' + (venue.id === 'cali' ? 'day' : 'night') + '.';
+  s += ' That comes to ' + fmtMoney(opt.total) + ' with the gratuity.';
+  return s;
+}
+function dayPhrase(session){
+  if (!session || !session.dayWord) return 'the night';
+  const w = session.dayWord;
+  if (w === 'weeknight') return 'a weeknight';
+  return 'a ' + w;
+}
+function missingBrandLine(venue, lead){
+  const missing = lead.prefs.brands.filter(b => !b.stocked);
+  if (!missing.length) return '';
+  const parts = missing.map(b => {
+    const alt = CATEGORY_ALTERNATIVES[b.cat] || venue.houseVodka;
+    const altItem = venue.bottles.find(x => x.name.toLowerCase().startsWith(alt.toLowerCase()));
+    const alsoAsked = lead.prefs.brands.some(x => x.stocked && x.cat === b.cat);
+    if (alsoAsked) return 'We do not stock ' + b.name + ', so ' + alt + ' is the one to go with';
+    return 'We do not stock ' + b.name + ', ' + alt + (altItem ? ' at ' + fmtMoney(altItem.price) + ' a bottle' : '') + ' is the ' + b.cat + ' most groups go with';
+  });
+  return parts.join('. ') + '.';
+}
+function stockedBrandLine(venue, lead){
+  const have = lead.prefs.brands.filter(b => b.stocked && b.price);
+  if (!have.length) return '';
+  return joinList(have.map(b => b.name + ' is ' + fmtMoney(b.price) + ' a bottle')) + ' if you would rather build your own tab from the list.';
+}
+function timingLine(venue, session, lateArrival){
+  if (venue.id === 'cali'){
+    let s = session && session.window ? cap(session.dayWord) + ' bookings run ' + session.window + ' and you need to be checked in by ' + session.checkIn + '.' : 'Day bookings run 12pm to 6pm with check in by 1pm, night bookings run 7pm to close with check in by 8pm.';
+    if (lateArrival) s += ' I saw you mentioned ' + lateArrival + ', so just a heads up the booking needs to be checked in by ' + (session && session.checkIn ? session.checkIn : 'then') + ' to keep the spot.';
+    return s;
+  }
+  if (venue.id === 'taxoffice'){
+    let s = 'Late night runs from 10pm to 3am and the booth is checked in at the time on your confirmation.';
+    if (lateArrival) s += ' I saw you mentioned ' + lateArrival + ', let me know and I will make sure the check in time works for you.';
+    return s;
+  }
+  let s = 'Booths are checked in by 11pm, so plan to arrive before then and the booth is yours from there. Two bottles gives you two hours of bottle service and a 1.75L or bigger bottle gives you three hours or more.';
+  if (lateArrival) s = 'I saw you mentioned ' + lateArrival + '. Booths need to be checked in by 11pm to keep the booking, so you would need to be in before then. Once you are in, two bottles gives you two hours of bottle service and a 1.75L or bigger bottle gives you three hours or more.';
+  return s;
+}
+function signoff(settings){
+  const name = (settings && settings.name) || 'Jordy';
+  const lines = ['Cheers,', name];
+  if (settings && settings.title) lines.push(settings.title);
+  if (settings && settings.mobile) lines.push(settings.mobile);
+  return lines.join('\n');
+}
+function contactLine(settings){
+  return (settings && settings.mobile) ? 'Reply here or call me on ' + settings.mobile + ' and I will sort it out.' : 'Reply here and I will sort it out.';
+}
+
+function daybedLine(an, s){
+  const beds = an.daybeds || [];
+  if (!beds.length) return '';
+  const when = dayPhrase(s).replace(/^a /, 'the ');
+  let priceBit;
+  if (beds.length === 2 && beds[0].price === beds[1].price) priceBit = 'A Deck or Poolside Daybed is ' + fmtMoney(beds[0].price) + ' for ' + when;
+  else priceBit = cap(joinList(beds.map(d => 'a ' + d.booth.name + ' is ' + fmtMoney(d.price))) + ' for ' + when);
+  return 'For a group your size a daybed is the simpler option too. ' + priceBit + ', and each comes with a welcome pack and a food platter rather than a minimum spend.';
+}
+function budgetLine(venue, lead, an, s){
+  if (!lead.budget || !an.optionA) return '';
+  const A = an.optionA, B = an.optionB;
+  if (lead.budget < A.minSpend){
+    let t = 'You mentioned around ' + fmtMoney(lead.budget) + '. ' + A.booth.name + ' at ' + fmtMoney(A.minSpend) + ' is the cheapest booth on ' + dayPhrase(s) + ', so it is close.';
+    const fri = resolveSession(venue, nextDay(new Date(), 5), {});
+    const friPrice = priceOf(venue, A.booth, fri);
+    if (s.key && s.key !== 'fri' && friPrice && friPrice < A.minSpend) t += ' If the date can move, the same booth is ' + fmtMoney(friPrice) + ' on a Friday.';
+    return t;
+  }
+  return '';
+}
+
+function extraGuestsLine(v, A, lead){
+  const entry = (v.id === 'cali' ? 'express ' : 'priority ') + (A.extraGuests === 1 ? 'entry' : 'entries');
+  let t = A.booth.name + ' is the biggest ' + (v.id === 'cali' ? 'area' : 'booth') + ' at ' + fmtMoney(A.minSpend) + ' and holds up to ' + A.cap + ', so for ' + lead.guests + ' you would add ' + A.extraGuests + ' ' + entry + ' for the extras';
+  if (A.extraGuests > 4) t += ', or we can look at two booths side by side';
+  return t + '.';
+}
+
+/* ---------- message writers ---------- */
+function writeSMS(lead, an, settings){
+  const v = an.venue; const name = (settings && settings.name) || 'Jordy';
+  const first = lead.firstName || 'there';
+  const lines = [];
+  if (!v) return 'Hi ' + first + ', ' + name + ' here from Artesian. Thanks for your enquiry, which venue and date were you looking at and how many in the group? I will send options straight back.';
+  lines.push('Hi ' + first + ', ' + name + ' here from ' + v.name + '.');
+  const who = lead.guests ? ' for ' + lead.guests : '';
+  const when = lead.date ? ' on ' + fmtDate(lead.date) : '';
+  if (an.handoff){
+    lines.push((lead.calledNoAnswer ? 'Tried to call about' : 'Thanks for your enquiry about') + ' your group' + who + when + '.');
+    lines.push('Groups that size are looked after by our events team, so Bonnie will be in touch with options shortly.');
+    return lines.join('\n');
+  }
+  if (!an.session.open){
+    lines.push((lead.calledNoAnswer ? 'Tried to call about' : 'Thanks for your enquiry about') + ' a booth' + who + '.');
+    lines.push('We only run booths on Fridays and Saturdays, is there a weekend night that works? I will send options as soon as I know the night.');
+    return lines.join('\n');
+  }
+  lines.push((lead.calledNoAnswer ? 'Tried to call about' : 'Thanks for your enquiry about') + ' a booth' + who + when + '.');
+  if (an.optionA){
+    const min = an.optionA.minSpend;
+    let p = (an.session.assumed ? 'Booths' : cap(dayPhrase(an.session).replace(/^a /, '')) + ' booths') + ' ' + (v.id === 'tempo' ? 'are' : 'start from') + ' a ' + fmtMoney(min) + ' minimum spend which all goes on your ' + (v.id === 'cali' ? 'food and drinks' : 'drinks');
+    if (an.lowestPackage > min) p += ', packages start at ' + fmtMoney(an.lowestPackage);
+    p += '.';
+    lines.push(p);
+  }
+  lines.push('I have emailed you a couple of options. Give me a shout here with any questions.');
+  return lines.join('\n');
+}
+
+function writeEmail(lead, an, settings){
+  const v = an.venue; const first = lead.firstName || 'there';
+  if (!v) return {subject:'Your booking enquiry', body:'Hi ' + first + ',\n\nThanks for getting in touch. Can you let me know which venue you are after, the date and how many in the group? I will send through options straight away.\n\n' + signoff(settings)};
+  const when = lead.date ? ' on ' + fmtDate(lead.date) : '';
+  const who = lead.guests ? ' for ' + lead.guests + (lead.guests === 1 ? ' person' : ' people') : '';
+  const occ = lead.occasionLabel ? ' for ' + lead.occasionLabel : '';
+  const subject = v.name + ' booth' + (lead.date ? ' ' + fmtDate(lead.date) : '');
+  const paras = ['Hi ' + first + ','];
+  paras.push('Thanks for getting in touch about a booth at ' + v.name + when + who + occ + '.');
+
+  if (an.handoff){
+    paras.push('Groups of that size are looked after by our functions and events team, so I have passed your details to Bonnie who will be in touch shortly with the right options. If you have any questions in the meantime just reply here.');
+    paras.push(signoff(settings));
+    return {subject, body:paras.join('\n\n')};
+  }
+  if (!an.session.open){
+    paras.push(v.closedNote + ' If a Friday or Saturday could work for your group, let me know which night and I will send through booth and package options straight away.' + (v.id !== 'bedroom' ? ' If you are set on that date, our sister venue Bedroom on Orchid Ave is open every night and I can look after you there too.' : ''));
+    paras.push(signoff(settings));
+    return {subject, body:paras.join('\n\n')};
+  }
+  const A = an.optionA, B = an.optionB, s = an.session;
+  if (A){
+    let booth = A.booth.name + ' suits your group, it holds up to ' + A.cap + ' and is ' + A.booth.blurb + '. On ' + dayPhrase(s) + ' the minimum spend is ' + fmtMoney(A.minSpend) + '. The full amount goes toward your ' + (v.id === 'cali' ? 'food and drinks' : 'drinks') + ', so it works like a bar tab rather than a booking fee, and a 5 percent staff gratuity is added on top.';
+    if (s.assumed){
+      const satS = resolveSession(v, nextDay(new Date(), 6), {});
+      const satP = priceOf(v, A.booth, satS);
+      booth = (lead.guests ? A.booth.name + ' suits your group, it holds up to ' + A.cap + ' and is ' + A.booth.blurb + '.' : 'Our booths hold up to ' + A.cap + ' and ' + A.booth.name + ' is ' + A.booth.blurb + '.') + ' Pricing depends on the night, ' + (satP === A.minSpend ? 'Friday and Saturday are both a ' + fmtMoney(A.minSpend) + ' minimum spend' : 'a Friday is a ' + fmtMoney(A.minSpend) + ' minimum spend and a Saturday is ' + fmtMoney(satP)) + '. The full amount goes toward your ' + (v.id === 'cali' ? 'food and drinks' : 'drinks') + ', so it works like a bar tab rather than a booking fee, and a 5 percent staff gratuity is added on top.';
+    }
+    if (an.lowestPackage > A.minSpend) booth += ' Our packages start at ' + fmtMoney(an.lowestPackage) + ' and cover the minimum spend.';
+    paras.push(booth);
+    paras.push('Here are two options that work well for your group.');
+    paras.push(pkgLine(v, A));
+    if (B && B.pkg){
+      let bLine = 'If you want to step it up, ' + pkgLine(v, B);
+      if (B.booth.id !== A.booth.id) bLine += ' That one I would put in ' + B.booth.name + ', ' + B.booth.blurb + ', which is a ' + fmtMoney(B.minSpend) + ' minimum spend on ' + dayPhrase(s) + '.';
+      if (lead.budget && B.pkg.price <= lead.budget && B.pkg.price >= lead.budget * 0.8) bLine += ' That lands right around the ' + fmtMoney(lead.budget) + ' you mentioned.';
+      paras.push(bLine);
+    }
+    const bl = budgetLine(v, lead, an, s);
+    if (bl) paras.push(bl);
+    if (A.extraGuests) paras.push(extraGuestsLine(v, A, lead) + (an.enquiryBooths && an.enquiryBooths.length ? ' ' + joinList(an.enquiryBooths.map(b => b.name + ' holds ' + b.cap)) + ' and is priced on enquiry, so I can check that with the venue too.' : ''));
+    const custom = [];
+    const missing = missingBrandLine(v, lead);
+    const stocked = stockedBrandLine(v, lead);
+    if (stocked) custom.push(cap(stocked));
+    else custom.push('You can also build your own tab from the bottle list, ' + v.houseVodka + ' is ' + fmtMoney(v.vodkaPrice) + ' for a 700ml bottle.');
+    if (missing) custom.push(missing);
+    paras.push(custom.join(' '));
+    if (an.daybeds && an.daybeds.length && lead.guests <= 6){
+      paras.push(daybedLine(an, s));
+    }
+  }
+  if (s.assumed || !lead.guests){
+    const need = [];
+    if (!lead.date) need.push('the date');
+    if (!lead.guests) need.push('how many are coming');
+    paras.push('Let me know ' + joinList(need) + ' and I will match you to the right booth and check it is free.');
+  }
+  paras.push(timingLine(v, s, an.lateArrival));
+  const hol = holidayInfo(lead.date);
+  if (hol && hol.type === 'holiday') paras.push('That date is a public holiday so a 15 percent surcharge applies on the night.');
+  if (v.id === 'taxoffice' && lead.date && lead.date.getDay() === 0) paras.push('Sundays carry a 10 percent surcharge on food and drinks.');
+  paras.push('If you want to lock it in, a 20 percent deposit holds the booth and the balance is paid before the ' + (v.id === 'cali' ? 'day' : 'night') + '. ' + contactLine(settings));
+  paras.push(signoff(settings));
+  return {subject, body:paras.join('\n\n')};
+}
+
+function writeCRM(lead, an){
+  const v = an.venue;
+  const parts = [];
+  let open = 'Web enquiry for ' + (lead.isFunction ? 'a private function' : 'a booth') + (lead.guests ? ' for ' + lead.guests : '') + (lead.occasionLabel ? ' for ' + lead.occasionLabel : '') + (v ? ' at ' + v.name : '') + (an.session && an.session.dayWord ? ' on ' + dayPhrase(an.session) : '');
+  const extras = [];
+  if (an.lateArrival) extras.push('wants to arrive around ' + an.lateArrival);
+  if (lead.prefs.brands.length) extras.push('asked about ' + joinList(lead.prefs.brands.map(b => b.name)));
+  if (lead.budget) extras.push('budget around ' + fmtMoney(lead.budget));
+  if (extras.length) open += ', ' + extras.join(', ');
+  parts.push(open + '.');
+  if (lead.calledNoAnswer) parts.push('Called, no answer, left a message.');
+  if (an.handoff){
+    parts.push('Function sized group, handed to Bonnie on Teams and told the client the events team will be in touch.');
+  } else if (!an.session.open){
+    parts.push('Date falls on a ' + an.session.label + ' which the venue does not run, sent SMS and email asking for a Friday or Saturday.');
+  } else if (an.optionA && an.optionA.pkg){
+    let s = 'Sent intro SMS and email with the ' + an.session.dayWord + ' ' + fmtMoney(an.optionA.minSpend) + ' minimum spend, Package ' + an.optionA.pkg.n + ' at ' + fmtMoney(an.optionA.pkg.price);
+    if (an.optionB && an.optionB.pkg && an.optionB.pkg.n !== an.optionA.pkg.n) s += ' and Package ' + an.optionB.pkg.n + ' at ' + fmtMoney(an.optionB.pkg.price);
+    s += ' plus the 5 percent gratuity';
+    const missing = lead.prefs.brands.filter(b => !b.stocked);
+    if (missing.length) s += ', advised ' + joinList(missing.map(b => b.name)) + ' is not stocked and pointed them to ' + joinList([...new Set(missing.map(b => CATEGORY_ALTERNATIVES[b.cat] || v.houseVodka))]);
+    if (an.lateArrival) s += ', flagged the ' + (v.id === 'cali' ? an.session.checkIn : v.id === 'taxoffice' ? 'check in time' : '11pm check in');
+    parts.push(s + '.');
+  } else {
+    parts.push('Sent intro SMS and email asking for the missing details before quoting.');
+  }
+  parts.push('Nothing confirmed until the 20 percent deposit is received.');
+  return parts.join(' ');
+}
+
+function writeHandoff(lead, an){
+  const v = an.venue;
+  const bits = [];
+  bits.push('Hi Bonnie, passing you a lead that is in your lane.');
+  bits.push((lead.name || 'The client') + ' is after ' + (lead.isFunction ? 'a private function' : 'an area') + (lead.guests ? ' for ' + lead.guests : '') + (v ? ' at ' + v.name : '') + (lead.date ? ' on ' + fmtDate(lead.date) : '') + (lead.occasionLabel ? ' for ' + lead.occasionLabel : '') + '.');
+  if (lead.description){ let d = lead.description.replace(/\s+/g, ' ').trim(); if (!/[.!?]$/.test(d)) d += '.'; bits.push('They wrote: ' + d); }
+  const contact = [lead.phone ? 'phone ' + lead.phone : '', lead.email ? 'email ' + lead.email : ''].filter(Boolean).join(', ');
+  if (contact) bits.push('Contact is ' + contact + '.');
+  bits.push('I have told them the events team will be in touch. Full record is in Zoho' + (lead.name ? ' under ' + lead.name : '') + '.');
+  return bits.join(' ');
+}
+
+/* ---------- replies to client messages ---------- */
+const SCENARIOS = [
+  {id:'book', label:'Wants to book', kw:['book it','lock it in','lock in','lock that in','go ahead','confirm','deposit','how do i pay','how do we pay','payment','pay now','we will take','we\'ll take','let\'s do','lets do','sounds good','keen','yes please','secure','take it','happy with','go with','want to book','like to book','proceed','send the link','booking link']},
+  {id:'price', label:'Prices and packages', kw:['price','cost','how much','minimum spend','min spend','package','packages','what do we get','included','include','what comes','options','quote','pricing','rates']},
+  {id:'avail', label:'Availability', kw:['available','availability','free on','still have','any booths','do you have','open on','is there a booth','got anything','any tables']},
+  {id:'time', label:'Arrival time and hours', kw:['what time','arrive','arrival','late','check in','check-in','how long','hours','until','close','open till','open until','last entry','midnight','12am','1am','2am']},
+  {id:'guests', label:'Guest numbers', kw:['more people','extra people','extra guests','another','add ','bring','how many','capacity','fit','plus one','+1','numbers','a few more','couple more']},
+  {id:'policy', label:'Dress code, tattoos, ID', kw:['dress','wear','tattoo','tattoos',' id ','identification','passport','licence','license','under 18','age limit','how old','old enough','underage','sneakers','shoes','thongs']},
+  {id:'change', label:'Change or cancel', kw:['cancel','refund','change the date','change date','move it','reschedule','postpone','different date','another date','push it','move the booking']},
+  {id:'cheaper', label:'Pushing on price', kw:['cheaper','discount','deal','too much','expensive','budget','afford','lower','best price','specials','cheap','bit steep','pricey','negotiate']},
+  {id:'bottle', label:'Specific bottles', kw:['grey goose','ciroc','belvedere','patron','don julio','hennessy','moet','veuve','dom perignon','ace of spades','tequila','vodka','whisky','whiskey','gin','champagne','bottle list','menu','drinks list','what bottles','jager','cocktail','shots']},
+  {id:'birthday', label:'Birthday perks', kw:['birthday','21st','30th','40th','free entry','birthday benefits','birthday package']},
+  {id:'food', label:'Food', kw:['food','eat','platter','platters','dinner','lunch','kitchen']},
+  {id:'thanks', label:'Thanks or not going ahead', kw:['thanks','thank you','cheers','not going ahead','no longer','changed our mind','cancelled our','won\'t be','wont be','not anymore','going elsewhere','booked elsewhere','all good']}
+];
+function detectScenarios(text){
+  const t = ' ' + (text || '').toLowerCase().replace(/\s+/g,' ') + ' ';
+  const scored = SCENARIOS.map(s => ({id:s.id, label:s.label, score:s.kw.reduce((n,k) => n + (t.includes(k) ? 1 : 0), 0)})).filter(s => s.score > 0).sort((a,b) => b.score - a.score);
+  if (!scored.length) return [{id:'generic', label:'General reply', score:0}];
+  // a thanks only wins if nothing else fired
+  if (scored[0].id === 'thanks' && scored.length > 1) return scored.slice(1).concat(scored[0]);
+  return scored;
+}
+function nearestWeekday(anchor, weekday){
+  const base = new Date(anchor.getFullYear(), anchor.getMonth(), anchor.getDate());
+  for (let off = 0; off <= 3; off++){
+    const a = new Date(base); a.setDate(base.getDate() + off); if (a.getDay() === weekday) return a;
+    const b = new Date(base); b.setDate(base.getDate() - off); if (b.getDay() === weekday) return b;
+  }
+  return nextDay(base, weekday);
+}
+function dayFromText(text, today, anchor){
+  const t = (text || '').toLowerCase();
+  const d = parseDateString(text, today);
+  if (d) return {date:d};
+  const bare = t.match(/\b(?:the\s+)?(\d{1,2})(?:st|nd|rd|th)\b(?!\s*(?:birthday|bday))/);
+  if (bare){
+    const day = parseInt(bare[1],10);
+    if (day >= 1 && day <= 31){
+      const ref = anchor || today;
+      let cand = new Date(ref.getFullYear(), ref.getMonth(), day);
+      if (cand < new Date(today.getFullYear(), today.getMonth(), today.getDate())) cand = new Date(ref.getFullYear(), ref.getMonth() + 1, day);
+      return {date:cand};
+    }
+  }
+  const ref = anchor && anchor >= today ? anchor : today;
+  if (/\bsat(urday)?\b/.test(t)) return {date: anchor ? nearestWeekday(ref, 6) : nextDay(today, 6)};
+  if (/\bfri(day)?\b/.test(t)) return {date: anchor ? nearestWeekday(ref, 5) : nextDay(today, 5)};
+  if (/\bsun(day)?\b/.test(t)) return {date: anchor ? nearestWeekday(ref, 0) : nextDay(today, 0)};
+  if (/\bthu(rs|rsday)?\b/.test(t)) return {date: anchor ? nearestWeekday(ref, 4) : nextDay(today, 4)};
+  if (/\btonight\b/.test(t)) return {date:new Date(today.getFullYear(), today.getMonth(), today.getDate())};
+  if (/\btomorrow\b/.test(t)) return {date:nextDay(today, (today.getDay() + 1) % 7)};
+  return null;
+}
+
+function writeReply(ctx, text, scenarioId, settings, today){
+  today = today || new Date();
+  const v = ctx.venue ? VENUES[ctx.venue] : null;
+  const first = ctx.firstName || 'there';
+  const lead = Object.assign({firstName:first, guests:ctx.guests || null, date:ctx.date || null, prefs:detectPrefs(text, v), times:parseTimes(text), description:text, occasionLabel:'', budget:budgetFromText(text), isFunction:false, calledNoAnswer:false, junkFound:false, guestMismatch:false}, {});
+  const dayHint = dayFromText(text, today, ctx.date || null);
+  if (dayHint && dayHint.date) lead.date = dayHint.date;
+  const g = guestsFromText(text); if (g) lead.guests = g;
+  lead.venue = ctx.venue || detectVenue(text);
+  const an = lead.venue ? buildOptions(lead, {today, caliSession: ctx.caliSession}) : {venue:null, session:{open:true}, flags:[]};
+  const pm = (text || '').match(/package\s*#?\s*(\d{1,2})\b/i);
+  if (pm && v && an.optionA){
+    const chosen = v.packages.find(p => p.n === parseInt(pm[1],10));
+    if (chosen){
+      const spend = Math.max(an.optionA.minSpend, chosen.price);
+      an.optionA = Object.assign({}, an.optionA, {pkg:chosen, overflow:Math.max(0, an.optionA.minSpend - chosen.price), spend, gratuity:Math.round(spend*0.05), total:Math.round(spend*1.05), deposit:Math.round(spend*1.05*0.2), alts:[]});
+      const tiers = [...new Set(v.packages.map(p => p.price))].sort((a,b) => a-b);
+      const up = tiers.find(t => t > chosen.price);
+      if (up && an.optionB){ const pb = pickPackage(v.packages, up, lead.prefs.tags); const sp = Math.max(an.optionB.minSpend, pb.price); an.optionB = Object.assign({}, an.optionB, {pkg:pb, overflow:0, spend:sp, gratuity:Math.round(sp*0.05), total:Math.round(sp*1.05), deposit:Math.round(sp*1.05*0.2), alts:[]}); }
+      else an.optionB = null;
+    }
+  }
+  const s = an.session;
+  const A = an.optionA, B = an.optionB;
+  const paras = ['Hi ' + first + ','];
+  const sms = [];
+  const missingBits = [];
+  if (!lead.venue) missingBits.push('which venue you are after');
+  if (!lead.date) missingBits.push('the date');
+  if (!lead.guests) missingBits.push('how many in the group');
+  const askMissing = missingBits.length ? 'If you can let me know ' + joinList(missingBits) + ' I will send the right options straight back.' : '';
+
+  switch (scenarioId){
+    case 'book': {
+      paras.push('Great news, happy to lock that in.');
+      let p = 'To get it booked I just need the full name for the booking' + (pm ? ' and the best mobile and email, then I will send the payment link for Package ' + pm[1] + '.' : ', the best mobile and email, and which package you are going with. I will then send the payment link.') + ' A 20 percent deposit holds the booth and the balance is paid before the ' + (v && v.id === 'cali' ? 'day' : 'night') + '.';
+      if (v && v.id !== 'taxoffice') p += ' Online card payments carry a 2.1 percent surcharge.';
+      paras.push(p);
+      if (A && A.pkg) paras.push('Just to confirm what we spoke about, ' + A.booth.name + ' on ' + dayPhrase(s) + ' with Package ' + A.pkg.n + ' at ' + fmtMoney(A.pkg.price) + ' comes to ' + fmtMoney(A.total) + ' with the 5 percent gratuity, and the deposit would be ' + fmtMoney(A.deposit) + '.');
+      paras.push('Once the deposit is through you will get a confirmation and the booth is yours.');
+      sms.push('Hi ' + first + ', great news. Send me the full name for the booking plus your mobile and email and I will send the payment link.', 'A 20 percent deposit holds the booth and the rest is paid before the ' + (v && v.id === 'cali' ? 'day' : 'night') + '.');
+      break;
+    }
+    case 'price': {
+      if (v && A && A.pkg && s.open){
+        let booth = A.booth.name + ' holds up to ' + A.cap + ' and on ' + dayPhrase(s) + ' the minimum spend is ' + fmtMoney(A.minSpend) + '. The whole amount goes on your ' + (v.id === 'cali' ? 'food and drinks' : 'drinks') + ' and a 5 percent staff gratuity is added on top.';
+        if (an.lowestPackage > A.minSpend) booth += ' Packages start at ' + fmtMoney(an.lowestPackage) + ' and cover the minimum spend.';
+        paras.push(booth);
+        paras.push(pkgLine(v, A));
+        if (B && B.pkg && B.pkg.n !== A.pkg.n) paras.push('If you want to step it up, ' + pkgLine(v, B) + (B.booth.id !== A.booth.id ? ' That one suits ' + B.booth.name + ', a ' + fmtMoney(B.minSpend) + ' minimum spend.' : ''));
+        const missing = missingBrandLine(v, lead); const stocked = stockedBrandLine(v, lead);
+        paras.push((stocked ? cap(stocked) : 'You can also build your own tab from the bottle list, ' + v.houseVodka + ' is ' + fmtMoney(v.vodkaPrice) + ' for a 700ml bottle.') + (missing ? ' ' + missing : ''));
+        paras.push('A 20 percent deposit locks the booth in. ' + contactLine(settings));
+        sms.push('Hi ' + first + ', ' + A.booth.name + ' on ' + dayPhrase(s) + ' is a ' + fmtMoney(A.minSpend) + ' minimum spend which all goes on drinks.', 'Package ' + A.pkg.n + ' at ' + fmtMoney(A.pkg.price) + ' covers it, or Package ' + (B && B.pkg ? B.pkg.n + ' at ' + fmtMoney(B.pkg.price) : '') + ' if you want more.', 'A 5 percent gratuity is added on top. Happy to email the full breakdown.');
+      } else if (v && !s.open){
+        paras.push(v.closedNote + ' Let me know a Friday or Saturday that works and I will send the booth and package options straight back.');
+        sms.push('Hi ' + first + ', ' + v.closedNote + ' Which weekend night works and I will send prices straight back.');
+      } else {
+        paras.push('Happy to send prices through. ' + askMissing);
+        sms.push('Hi ' + first + ', happy to send prices. ' + askMissing);
+      }
+      break;
+    }
+    case 'avail': {
+      if (v && lead.date && s.open){
+        paras.push('Let me check the calendar for ' + fmtDate(lead.date) + (lead.guests ? ' for your group of ' + lead.guests : '') + ' and I will come straight back to you.');
+        paras.push(('Booths go quickly on a ' + (s.dayWord || 'weekend') + ' so a deposit is the only way to hold one. ' + (A && A.pkg && !A.extraGuests ? A.booth.name + ' is a ' + fmtMoney(A.minSpend) + ' minimum spend that ' + (v.id === 'cali' ? 'session' : 'night') + ', which all goes on your drinks.' : '')).trim());
+        if (A && A.extraGuests) paras.push(extraGuestsLine(v, A, lead));
+        sms.push('Hi ' + first + ', checking ' + fmtDate(lead.date) + ' for you now and will come straight back.', 'Booths go quick so a deposit is the only way to hold one.');
+      } else if (v && lead.date && !s.open){
+        paras.push(fmtDate(lead.date) + ' is a ' + s.label + ' and ' + lower(v.closedNote) + ' If a Friday or Saturday could work let me know and I will check straight away.');
+        sms.push('Hi ' + first + ', ' + v.closedNote + ' Is there a weekend night that works?');
+      } else {
+        paras.push('Happy to check for you. ' + askMissing);
+        sms.push('Hi ' + first + ', happy to check. ' + askMissing);
+      }
+      break;
+    }
+    case 'time': {
+      if (v){
+        paras.push(timingLine(v, s, an.lateArrival));
+        paras.push(v.hoursLine);
+        sms.push('Hi ' + first + ', quick one on timing.', timingLine(v, s, an.lateArrival));
+      } else { paras.push('Our nightclub booths need to be checked in by 11pm and Cali Beach day bookings by 1pm. ' + askMissing); sms.push('Hi ' + first + ', booths need to be checked in by 11pm. ' + askMissing); }
+      break;
+    }
+    case 'guests': {
+      if (v && A && A.extraGuests){
+        paras.push(extraGuestsLine(v, A, lead));
+        sms.push('Hi ' + first + ', ' + lower(extraGuestsLine(v, A, lead)));
+      } else if (v && A){
+        const ew = v.id === 'cali' ? 'an express entry' : 'a priority entry';
+        paras.push(A.booth.name + ' is set for up to ' + A.cap + '. If a few more want to come along they can be added with ' + ew + ' each, just let me know final numbers before the ' + (v.id === 'cali' ? 'day' : 'night') + '.');
+        if (B && B.booth.id !== A.booth.id && B.cap > A.cap) paras.push('If the group grows past that, ' + B.booth.name + ' holds up to ' + B.cap + ' at a ' + fmtMoney(B.minSpend) + ' minimum spend on ' + dayPhrase(s) + '.');
+        sms.push('Hi ' + first + ', ' + A.booth.name + ' holds up to ' + A.cap + '. Extra guests can be added with ' + ew + ' each, just send me final numbers.');
+      } else { paras.push('Let me know your final numbers and I will match you to the right booth. ' + askMissing); sms.push('Hi ' + first + ', send me final numbers and I will match the right booth.'); }
+      break;
+    }
+    case 'policy': {
+      if (v){
+        const dress = v.rules.filter(r => /dress|tattoo|footwear|singlet/i.test(r)).join(' ');
+        paras.push('Everyone needs valid photo ID and must be 18 or over, a driver licence, passport or Digital iD is fine.');
+        if (dress) paras.push(dress);
+        paras.push('The card used for the booking needs to be shown on arrival too.');
+        sms.push('Hi ' + first + ', everyone needs valid photo ID and must be 18 plus. ' + (dress ? dress : ''));
+      } else { paras.push('Everyone needs valid photo ID and must be 18 or over. Dress is smart casual and head, face or offensive tattoos are not accepted at our venues.'); sms.push('Hi ' + first + ', everyone needs photo ID and must be 18 plus, dress is smart casual.'); }
+      break;
+    }
+    case 'change': {
+      paras.push('Date changes are fine with at least 96 hours notice, just let me know the new date and I will move it across. Inside 96 hours the booking cannot be changed and minimum spends are non refundable, so the sooner you let me know the better.');
+      if (lead.date && v) paras.push('If ' + fmtDate(lead.date) + ' is the new date, ' + (s.open ? 'I will check it now and confirm.' : 'that is a ' + s.label + ' and ' + lower(v.closedNote) + ' A Friday or Saturday would work.'));
+      sms.push('Hi ' + first + ', no worries. Date changes are fine with 96 hours notice, send me the new date and I will move it. Inside 96 hours it cannot be changed.');
+      break;
+    }
+    case 'cheaper': {
+      paras.push('Totally get it. The minimum spend is not a fee, it is your drinks tab for the ' + (v && v.id === 'cali' ? 'day' : 'night') + ', so every dollar goes on bottles for the group. Think of it like a festival ticket where the whole ticket turns into drinks.');
+      if (v && A && s.open){
+        const cheaperDay = v.booths.filter(b => b.id === A.booth.id).map(b => ({fri:priceOf(v, b, resolveSession(v, nextDay(today,5), {})), sat:priceOf(v, b, resolveSession(v, nextDay(today,6), {}))}))[0];
+        const ways = [];
+        if (s.key && s.key !== 'fri' && cheaperDay && cheaperDay.fri && cheaperDay.fri < A.minSpend) ways.push('the same booth is ' + fmtMoney(cheaperDay.fri) + ' on a Friday');
+        const smaller = v.booths.filter(b => !b.enquiry && b.type !== 'daybed' && priceOf(v, b, s) != null && priceOf(v, b, s) < A.minSpend).sort((a,b) => priceOf(v,a,s) - priceOf(v,b,s))[0];
+        if (smaller) ways.push(smaller.name + ' holds ' + boothCap(v, smaller, s) + ' and is ' + fmtMoney(priceOf(v, smaller, s)));
+        if (an.lowestPackage && A.pkg && an.lowestPackage < A.pkg.price) ways.push('packages start at ' + fmtMoney(an.lowestPackage));
+        if (ways.length) paras.push('A couple of ways to bring it down, ' + joinList(ways) + '. Prices are set by the venue so I cannot discount the minimum spend, but I can make sure you are on the cheapest option that fits.');
+        else paras.push('Prices are set by the venue so I cannot discount the minimum spend, but ' + A.booth.name + ' at ' + fmtMoney(A.minSpend) + ' is already the cheapest option that fits your group' + (lead.guests ? ' of ' + lead.guests : '') + '.');
+        sms.push('Hi ' + first + ', fair call. The minimum spend all goes on your drinks so nothing is lost, it is your tab for the night.', ways.length ? cap(joinList(ways)) + '.' : A.booth.name + ' at ' + fmtMoney(A.minSpend) + ' is the cheapest fit for your group.');
+      } else { paras.push(askMissing || 'Tell me what you had in mind to spend and I will find the closest fit.'); sms.push('Hi ' + first + ', the minimum spend all goes on your drinks. Tell me your budget and I will find the closest fit.'); }
+      break;
+    }
+    case 'bottle': {
+      if (v){
+        const stocked = stockedBrandLine(v, lead); const missing = missingBrandLine(v, lead);
+        const cats = lead.prefs.tags.filter(t => t !== 'vodka' && CATEGORY_ALTERNATIVES[t]);
+        const catLines = cats.map(t => { const alt = v.bottles.find(x => x.name.toLowerCase().startsWith(CATEGORY_ALTERNATIVES[t].toLowerCase())); return alt ? 'For ' + t + ' most groups go ' + alt.name + ' at ' + fmtMoney(alt.price) : ''; }).filter(Boolean);
+        let p = (stocked ? cap(stocked) : v.houseVodka + ' is our house vodka at ' + fmtMoney(v.vodkaPrice) + ' for a 700ml bottle, ' + fmtMoney(v.bottles.find(x => x.name === 'Belvedere 1.75L').price) + ' for the 1.75L and ' + fmtMoney(v.bottles.find(x => x.name === 'Belvedere 3L').price) + ' for the 3L.');
+        if (missing) p += ' ' + missing;
+        if (catLines.length) p += ' ' + catLines.join('. ') + '.';
+        paras.push(p);
+        paras.push('Anything you pick from the list goes toward the minimum spend, and the packages are the best value if you want it sorted in one go. Happy to send the full list through.');
+        sms.push('Hi ' + first + ', ' + lower(p));
+      } else { paras.push('Belvedere is the house vodka across our venues at $400 a bottle, with tequila, whisky, gin and champagne on every list. ' + askMissing); sms.push('Hi ' + first + ', Belvedere is $400 a bottle at all our venues. ' + askMissing); }
+      break;
+    }
+    case 'birthday': {
+      if (v && v.id === 'tempo') paras.push('Happy birthday for it. If a booth is more than you need, our birthday benefits give the birthday person and up to 10 friends free entry between 10pm and 12am, everyone just needs to be in by 11pm. Otherwise a booth makes it a proper night and I can add a few touches.');
+      else paras.push('Happy birthday for it. A booth makes it a proper night and I can add a few touches like signage on the booth. If a booth is more than you need, ask me about our birthday benefits for free entry for the birthday group.');
+      if (v && A && A.pkg && s.open) paras.push(A.booth.name + ' on ' + dayPhrase(s) + ' is a ' + fmtMoney(A.minSpend) + ' minimum spend which all goes on drinks. ' + pkgLine(v, A));
+      sms.push('Hi ' + first + ', happy birthday for it. A booth makes it a proper night and I can add signage for the birthday person. ' + (A && A.pkg ? A.booth.name + ' is a ' + fmtMoney(A.minSpend) + ' minimum spend on ' + dayPhrase(s) + '.' : askMissing));
+      break;
+    }
+    case 'food': {
+      if (v && v.id === 'cali') paras.push('Every booth and cabana at Cali includes a complimentary food package with the bottle service packages, and all bookings need some food on the table. The Cali Slider Board is $75, the Mediterranean Mezze Board is $78 and the Beach Club Seafood Platter is $145, each serves 2 to 4, and the full poolside menu is available all day.');
+      else if (v) paras.push(v.name + ' is a nightclub so we do not run a kitchen, the booth is all about the bottle service. Plenty of great spots to eat nearby before you come in.');
+      else paras.push('Cali Beach runs a full poolside menu and includes a food package with its bottle service packages. Our nightclubs do not serve food. ' + askMissing);
+      sms.push('Hi ' + first + ', ' + (v && v.id === 'cali' ? 'booth packages include a food package and the full poolside menu is available all day.' : 'the venue is bottle service only with no kitchen, plenty of good spots to eat nearby first.'));
+      break;
+    }
+    case 'thanks': {
+      paras.push('No worries at all. If plans change or you want to look at another date just give me a shout and I will sort it out.');
+      sms.push('No worries ' + first + ', if plans change just give me a shout.');
+      break;
+    }
+    default: {
+      paras.push('Thanks for getting back to me.');
+      if (v && A && A.pkg && s.open) paras.push(A.booth.name + ' on ' + dayPhrase(s) + ' is a ' + fmtMoney(A.minSpend) + ' minimum spend which all goes on your drinks. ' + pkgLine(v, A));
+      if (askMissing) paras.push(askMissing);
+      else paras.push('Let me know if you want me to lock it in, a 20 percent deposit holds the booth.');
+      sms.push('Hi ' + first + ', thanks for getting back to me. ' + (askMissing || 'Let me know if you want me to lock it in, a 20 percent deposit holds the booth.'));
+    }
+  }
+  // add ons when other scenarios also fired
+  const detected = detectScenarios(text).map(x => x.id);
+  if (scenarioId !== 'time' && detected.includes('time') && v && an.lateArrival) paras.push(timingLine(v, s, an.lateArrival));
+  if (scenarioId !== 'bottle' && scenarioId !== 'price' && v && lead.prefs.brands.some(b => !b.stocked)) paras.push(missingBrandLine(v, lead));
+  paras.push(signoff(settings));
+  const crm = writeReplyCRM(scenarioId, lead, an, v);
+  return {email:{subject: v ? 'Re: ' + v.name + ' booth' + (lead.date ? ' ' + fmtDate(lead.date) : '') : 'Re: your booking', body:paras.join('\n\n')}, sms:sms.join('\n'), crm, analysis:an, lead};
+}
+function writeReplyCRM(scenarioId, lead, an, v){
+  const map = {book:'Client wants to go ahead, sent what I need for the booking and the deposit details.', price:'Client asked about prices, sent minimum spend and package options.', avail:'Client asked about availability, checking the calendar and coming back to them.', time:'Client asked about arrival times, sent check in and hours.', guests:'Client asked about adding guests, advised booth capacity and priority entry for extras.', policy:'Client asked about entry rules, sent ID, dress and tattoo policy.', change:'Client asked about changing the booking, advised the 96 hour rule.', cheaper:'Client pushed on price, explained the minimum spend is a drinks tab and offered the cheapest fit.', bottle:'Client asked about specific bottles, sent prices and what is stocked.', birthday:'Client asked about birthday options, sent booth and birthday benefits.', food:'Client asked about food, advised what is available.', thanks:'Client not going ahead for now, left the door open.', generic:'Replied to the client and asked for the missing details.'};
+  let s = map[scenarioId] || map.generic;
+  if (an && an.optionA && an.optionA.pkg && an.session && an.session.open && ['price','generic','birthday','book'].includes(scenarioId)) s += ' Quoted ' + an.optionA.booth.name + ' at ' + fmtMoney(an.optionA.minSpend) + ' with Package ' + an.optionA.pkg.n + ' at ' + fmtMoney(an.optionA.pkg.price) + ' plus 5 percent gratuity.';
+  return s + ' Nothing confirmed until the 20 percent deposit is received.';
+}
+
+/* ---------- quote and SevenRooms note ---------- */
+function computeQuote(q){
+  const v = VENUES[q.venue];
+  const booth = v.booths.find(b => b.id === q.boothId);
+  const session = q.session;
+  const min = booth ? (priceOf(v, booth, session) || 0) : 0;
+  const pkg = q.pkgN ? v.packages.find(p => p.n === q.pkgN) : null;
+  const spend = Math.max(min, pkg ? pkg.price : (q.customSpend || 0));
+  const gratuity = Math.round(spend * 0.05);
+  let sub = spend + gratuity;
+  const holiday = q.publicHoliday ? Math.round(sub * 0.15) : 0;
+  const sunday = (q.sundaySurcharge ? Math.round(sub * 0.10) : 0);
+  sub += holiday + sunday;
+  const online = q.onlineSurcharge ? Math.round(sub * 0.021) : 0;
+  const total = sub + online;
+  const deposit = q.depositPaid != null ? q.depositPaid : Math.round(total * 0.2);
+  return {venue:v, booth, session, min, pkg, spend, gratuity, holiday, sunday, online, total, deposit, balance: total - deposit};
+}
+function writeQuoteEmail(q, r, ctx, settings){
+  const first = ctx.firstName || 'there';
+  const paras = ['Hi ' + first + ','];
+  paras.push('Here is the summary for ' + r.venue.name + (ctx.date ? ' on ' + fmtDate(ctx.date) : '') + (ctx.guests ? ' for ' + ctx.guests : '') + '.');
+  let line = r.booth.name + ' with a ' + fmtMoney(r.min) + ' minimum spend';
+  if (r.pkg) line += ' and Package ' + r.pkg.n + ' at ' + fmtMoney(r.pkg.price) + ', which gets you ' + lower(itemsProse(r.pkg.items));
+  else if (r.spend > r.min) line += ', with ' + fmtMoney(r.spend) + ' on bottle service';
+  line += '.';
+  paras.push(line);
+  let money = 'With the 5 percent staff gratuity of ' + fmtMoney(r.gratuity);
+  if (r.holiday) money += ' and the 15 percent public holiday surcharge of ' + fmtMoney(r.holiday);
+  if (r.sunday) money += ' and the 10 percent Sunday surcharge of ' + fmtMoney(r.sunday);
+  if (r.online) money += ' and the 2.1 percent online card surcharge of ' + fmtMoney(r.online);
+  money += ' it comes to ' + fmtMoney(r.total) + ' all up. A 20 percent deposit of ' + fmtMoney(r.deposit) + ' holds the booth and the balance of ' + fmtMoney(r.balance) + ' is paid before the ' + (r.venue.id === 'cali' ? 'day' : 'night') + '.';
+  paras.push(money);
+  paras.push(timingLine(r.venue, r.session, null));
+  if (r.venue.id === 'cali') paras.push('Every booking needs some food on the table and the packages include a complimentary food package.');
+  paras.push('Reply with a yes and I will send the payment link through' + (settings && settings.mobile ? ', or call me on ' + settings.mobile + ' if easier.' : '.'));
+  paras.push(signoff(settings));
+  return {subject: r.venue.name + ' booking summary' + (ctx.date ? ' ' + fmtDate(ctx.date) : ''), body: paras.join('\n\n')};
+}
+function writeSevenRooms(q, r, ctx){
+  const lines = [];
+  lines.push('Venue balance due ' + fmtMoney(r.balance));
+  lines.push('Deposit paid ' + fmtMoney(r.deposit));
+  lines.push(r.pkg ? 'Package ' + r.pkg.n : 'Bottle service tab ' + fmtMoney(r.spend));
+  lines.push('Mixes ' + (q.mixes || 'to confirm on the night'));
+  lines.push('Signage ' + (q.signage || 'none'));
+  lines.push('Min spend ' + fmtMoney(r.min) + ' plus 5 percent gratuity' + (r.holiday ? ' plus 15 percent public holiday surcharge' : '') + (r.sunday ? ' plus 10 percent Sunday surcharge' : ''));
+  lines.push('Total ' + fmtMoney(r.total) + (r.online ? ' including 2.1 percent online surcharge' : ''));
+  lines.push((ctx.guests || '') + ' guests arriving ' + (q.arrival || (r.venue.id === 'cali' ? (r.session && r.session.checkIn ? 'by ' + r.session.checkIn : '') : 'by 11pm')));
+  return lines.join('\n').replace(/^ guests/m, 'Guests');
+}
+function writeQuoteCRM(q, r, ctx){
+  let s = 'Sent booking summary for ' + r.booth.name + ' on ' + (r.session && r.session.dayWord ? dayPhrase(r.session) : 'the booked night') + (r.pkg ? ' with Package ' + r.pkg.n + ' at ' + fmtMoney(r.pkg.price) : ' with ' + fmtMoney(r.spend) + ' bottle service') + ', total ' + fmtMoney(r.total) + ' including the 5 percent gratuity' + (r.online ? ' and online surcharge' : '') + '. Deposit of ' + fmtMoney(r.deposit) + ' requested with balance of ' + fmtMoney(r.balance) + ' due before the ' + (r.venue.id === 'cali' ? 'day' : 'night') + '. Nothing confirmed until the 20 percent deposit is received.';
+  return s;
+}
+
+
+</script>
+<script>
+/* ===== UI ===== */
+(function(){
+  const $ = (id) => document.getElementById(id);
+  const state = {lead:null, an:null, settings:{name:'Jordy', mobile:'', title:'Sales and Events, Artesian Hospitality'}, caliSession:'day'};
+
+  /* settings */
+  try { const saved = JSON.parse(localStorage.getItem('artesianDesk.settings') || 'null'); if (saved) state.settings = Object.assign(state.settings, saved); } catch(e){}
+  function openSettings(){ $('sName').value = state.settings.name || ''; $('sMobile').value = state.settings.mobile || ''; $('sTitle').value = state.settings.title || ''; $('sheet').classList.add('on'); $('sName').focus(); }
+  function closeSettings(){ $('sheet').classList.remove('on'); }
+  $('settingsBtn').addEventListener('click', openSettings);
+  $('closeSettings').addEventListener('click', closeSettings);
+  $('sheet').addEventListener('click', e => { if (e.target === $('sheet')) closeSettings(); });
+  $('saveSettings').addEventListener('click', () => {
+    state.settings = {name: $('sName').value.trim() || 'Jordy', mobile: $('sMobile').value.trim(), title: $('sTitle').value.trim()};
+    try { localStorage.setItem('artesianDesk.settings', JSON.stringify(state.settings)); } catch(e){}
+    closeSettings(); toast('Saved');
+    if (state.lead) renderLead();
+  });
+  if (!state.settings.mobile) setTimeout(() => toast('Add your mobile under the gear icon so it lands in the messages'), 800);
+
+  /* tabs */
+  document.querySelectorAll('.seg button').forEach(b => b.addEventListener('click', () => showTab(b.dataset.tab)));
+  function showTab(id){
+    document.querySelectorAll('.seg button').forEach(b => b.classList.toggle('on', b.dataset.tab === id));
+    document.querySelectorAll('.tab').forEach(t => t.classList.toggle('on', t.id === 'tab-' + id));
+    if (id === 'reply') prefillReply();
+    if (id === 'quote') prefillQuote();
+    window.scrollTo({top:0});
+  }
+
+  /* helpers */
+  let toastTimer;
+  function toast(msg){ const t = $('toast'); t.textContent = msg; t.classList.add('on'); clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('on'), 1600); }
+  function esc(s){ return String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+  function copyText(text, btn){
+    const done = () => { if (btn){ btn.textContent = 'Copied'; btn.classList.add('done'); setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('done'); }, 1500); } toast('Copied'); };
+    if (navigator.clipboard && window.isSecureContext){ navigator.clipboard.writeText(text).then(done).catch(() => fallbackCopy(text, done)); }
+    else fallbackCopy(text, done);
+  }
+  function fallbackCopy(text, done){
+    const ta = document.createElement('textarea'); ta.value = text; ta.setAttribute('readonly',''); ta.style.position = 'fixed'; ta.style.top = '-1000px'; document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); } catch(e){}
+    document.body.removeChild(ta); done();
+  }
+  function scrollToOut(el){ if (window.innerWidth <= 900) setTimeout(() => el.scrollIntoView({behavior:'smooth', block:'start'}), 50); }
+  function autosize(ta){ ta.style.height = 'auto'; ta.style.height = Math.max(90, ta.scrollHeight + 4) + 'px'; }
+  function msgBlock(title, text, id, hint){
+    return '<div class="msg"><div class="row between"><span class="ttl">' + esc(title) + '</span>' + (hint ? '<span class="tiny">' + esc(hint) + '</span>' : '') + '<button class="copy" data-copy="' + id + '">Copy</button></div><textarea class="out" id="' + id + '">' + esc(text) + '</textarea></div>';
+  }
+  function wireCopies(root){
+    root.querySelectorAll('[data-copy]').forEach(b => b.addEventListener('click', () => copyText($(b.dataset.copy).value, b)));
+    root.querySelectorAll('textarea.out').forEach(ta => { autosize(ta); ta.addEventListener('input', () => autosize(ta)); });
+  }
+  function dateInputValue(d){ if (!d) return ''; return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
+  function dateFromInput(v){ if (!v) return null; const m = v.match(/(\d{4})-(\d{2})-(\d{2})/); if (!m) return null; return new Date(parseInt(m[1],10), parseInt(m[2],10)-1, parseInt(m[3],10)); }
+  const warnIcon = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>';
+  const infoIcon = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>';
+  function flagsHTML(flags){ return flags.map(f => '<div class="flag ' + f.level + '">' + (f.level === 'warn' ? warnIcon : infoIcon) + '<span>' + esc(f.text) + '</span></div>').join(''); }
+  function optionHTML(label, opt, v, s){
+    if (!opt) return '';
+    const p = opt.pkg;
+    let h = '<div class="opt"><div class="k">' + esc(label) + '</div>';
+    h += '<div class="price">' + esc(fmtMoney(opt.total)) + '<small>with 5 percent gratuity</small></div>';
+    h += '<div class="booth">' + esc(opt.booth.name) + ' <span class="quiet">holds ' + opt.cap + ', ' + esc(fmtMoney(opt.minSpend)) + ' minimum spend ' + esc(s && s.dayWord ? 'on ' + dayPhrase(s) : '') + '</span></div>';
+    if (p) h += '<div class="items"><b>Package ' + p.n + ' at ' + esc(fmtMoney(p.price)) + '</b><br>' + esc(p.items.join(', ')) + '</div>';
+    if (opt.overflow > 0) h += '<div class="items">Package is under the minimum spend, the other ' + esc(fmtMoney(opt.overflow)) + ' goes on extra bottles' + (v.id === 'cali' ? ' or food' : '') + '.</div>';
+    if (opt.extraGuests) h += '<div class="items">Over capacity by ' + opt.extraGuests + ', add priority entries for the extras.</div>';
+    h += '<div class="meta"><span>Gratuity ' + esc(fmtMoney(opt.gratuity)) + '</span><span>20 percent deposit ' + esc(fmtMoney(opt.deposit)) + '</span><span>Balance ' + esc(fmtMoney(opt.total - opt.deposit)) + '</span></div>';
+    if (opt.alts && opt.alts.length) h += '<div class="alt">Same price: ' + esc(opt.alts.map(a => 'Package ' + a.n + ', ' + a.items.slice(0,3).join(', ')).join(' or ')) + '</div>';
+    return h + '</div>';
+  }
+
+  /* ---------- lead tab ---------- */
+  $('readLead').addEventListener('click', () => {
+    const text = $('leadText').value;
+    if (!text.trim()){ toast('Paste the lead first'); return; }
+    state.lead = parseLead(text, new Date());
+    state.caliSession = state.lead.nightWords ? 'night' : 'day';
+    renderLead();
+  });
+  $('clearLead').addEventListener('click', () => { $('leadText').value = ''; state.lead = null; state.an = null; $('leadOut').innerHTML = '<div class="card"><div class="empty">Nothing read yet. Paste a lead and press Read lead.</div></div>'; });
+
+  function renderLead(){
+    const lead = state.lead; if (!lead) return;
+    const an = buildOptions(lead, {today:new Date(), caliSession:state.caliSession});
+    state.an = an;
+    const v = an.venue;
+    const sms = writeSMS(lead, an, state.settings);
+    const email = writeEmail(lead, an, state.settings);
+    const crm = writeCRM(lead, an);
+    const s = an.session;
+    let h = '<div class="card">';
+    h += '<div class="row between"><h2>' + esc(lead.name || 'No name found') + '</h2>' + (lead.leadStatus ? '<span class="tiny">Status: ' + esc(lead.leadStatus) + '</span>' : '') + '</div>';
+    h += '<div class="facts">';
+    h += '<div class="fact"><b>' + esc(v ? v.name : 'Not sure') + '</b><span>Venue</span></div>';
+    h += '<div class="fact"><b>' + esc(lead.date ? fmtDate(lead.date) : 'No date') + '</b><span>' + esc(s && s.dayWord && s.open ? (s.season ? cap(s.dayWord) + ', ' + s.season + ' pricing' : cap(s.dayWord)) : s && !s.open ? 'Venue not open' : 'Date') + '</span></div>';
+    h += '<div class="fact"><b>' + esc(lead.guests ? lead.guests : 'No count') + '</b><span>Guests</span></div>';
+    h += '<div class="fact"><b>' + esc(lead.budget ? fmtMoney(lead.budget) : 'None given') + '</b><span>Budget</span></div>';
+    h += '</div>';
+    h += '<div class="contact">' + (lead.phone ? '<button data-copytext="' + esc(lead.phone) + '">' + esc(lead.phone) + '</button>' : '') + (lead.email ? '<button data-copytext="' + esc(lead.email) + '">' + esc(lead.email) + '</button>' : '') + (lead.bookingType ? '<span>' + esc(lead.bookingType) + '</span>' : '') + (lead.occasionLabel ? '<span>' + esc(cap(lead.occasionLabel)) + '</span>' : '') + '</div>';
+    if (lead.description) h += '<p class="quiet mt" style="white-space:pre-wrap">' + esc(lead.description) + '</p>';
+    h += '<div class="fields">';
+    h += '<div><label class="f">First name</label><input type="text" id="eName" value="' + esc(lead.firstName) + '"></div>';
+    h += '<div><label class="f">Venue</label><select id="eVenue"><option value="">Not sure</option>' + VENUE_ORDER.map(k => '<option value="' + k + '"' + (lead.venue === k ? ' selected' : '') + '>' + esc(VENUES[k].name) + '</option>').join('') + '</select></div>';
+    h += '<div><label class="f">Date</label><input type="date" id="eDate" value="' + dateInputValue(lead.date) + '"></div>';
+    h += '<div><label class="f">Guests</label><input type="number" id="eGuests" min="1" value="' + (lead.guests || '') + '"></div>';
+    h += '<div><label class="f">Budget</label><input type="number" id="eBudget" min="0" value="' + (lead.budget || '') + '"></div>';
+    if (v && v.id === 'cali' && lead.date && lead.date.getDay() === 6) h += '<div><label class="f">Saturday session</label><select id="eCali"><option value="day"' + (state.caliSession === 'day' ? ' selected' : '') + '>Day, 12pm to 6pm</option><option value="night"' + (state.caliSession === 'night' ? ' selected' : '') + '>Night, 7pm to close</option></select></div>';
+    h += '</div>';
+    h += '<div class="row mt"><button class="btn sm" id="eApply">Update</button><span class="tiny">Fix anything it got wrong, then Update.</span></div>';
+    h += '</div>';
+
+    if (an.flags.length) h += '<div class="card"><h2>Watch out</h2>' + flagsHTML(an.flags) + '</div>';
+
+    if (an.optionA){
+      const sUsed = an.fallbackSession || s;
+      h += '<div class="card"><h2>' + (an.fallbackSession ? 'If they move to a Friday' : 'Two options') + '</h2>';
+      if (an.budgetNote) h += '<div class="flag info">' + infoIcon + '<span>' + esc(an.budgetNote) + '</span></div>';
+      h += '<div class="grid3 mt">' + optionHTML('Keep it simple', an.optionA, v, sUsed) + optionHTML('Step it up', an.optionB, v, sUsed) + '</div>';
+      if (an.daybeds && an.daybeds.length) h += '<p class="quiet mt">Daybeds for a small group: ' + esc(an.daybeds.map(d => d.booth.name + ' ' + fmtMoney(d.price)).join(', ')) + '. Welcome pack and platter, no minimum spend.</p>';
+      h += '</div>';
+    }
+
+    h += '<div class="card"><h2>Messages</h2>';
+    h += msgBlock('SMS', sms, 'mSms');
+    h += msgBlock('Email subject', email.subject, 'mSubj');
+    h += msgBlock('Email', email.body, 'mEmail');
+    h += msgBlock('CRM note', crm, 'mCrm', 'No name or date in the body, Zoho has those');
+    if (an.handoff) h += msgBlock('Teams message to Bonnie', writeHandoff(lead, an), 'mTeams');
+    h += '</div>';
+    const out = $('leadOut'); out.innerHTML = h; wireCopies(out); scrollToOut(out);
+    out.querySelectorAll('[data-copytext]').forEach(b => b.addEventListener('click', () => copyText(b.dataset.copytext, null)));
+    $('eApply').addEventListener('click', applyLeadEdits);
+    out.querySelectorAll('#eName,#eVenue,#eDate,#eGuests,#eBudget,#eCali').forEach(el => el.addEventListener('keydown', e => { if (e.key === 'Enter') applyLeadEdits(); }));
+  }
+  function applyLeadEdits(){
+    const lead = state.lead;
+    lead.firstName = $('eName').value.trim() || lead.firstName;
+    lead.venue = $('eVenue').value || null;
+    lead.date = dateFromInput($('eDate').value);
+    lead.guests = parseInt($('eGuests').value, 10) || null;
+    lead.guestMismatch = false;
+    lead.budget = parseFloat($('eBudget').value) || null;
+    const cs = $('eCali'); if (cs) state.caliSession = cs.value;
+    lead.prefs = detectPrefs(lead.description, lead.venue ? VENUES[lead.venue] : null);
+    renderLead(); toast('Updated');
+  }
+
+  /* ---------- reply tab ---------- */
+  const scenarioSel = $('scenario');
+  SCENARIOS.forEach(sc => { const o = document.createElement('option'); o.value = sc.id; o.textContent = sc.label; scenarioSel.appendChild(o); });
+  (function(){ const o = document.createElement('option'); o.value = 'generic'; o.textContent = 'General reply'; scenarioSel.appendChild(o); })();
+  function prefillReply(){
+    const lead = state.lead; if (!lead) return;
+    if (!$('rName').value) $('rName').value = lead.firstName || '';
+    if (!$('rVenue').value) $('rVenue').value = lead.venue || '';
+    if (!$('rDate').value) $('rDate').value = dateInputValue(lead.date);
+    if (!$('rGuests').value) $('rGuests').value = lead.guests || '';
+    $('rCali').value = state.caliSession; toggleCali('rVenue','rCaliWrap');
+  }
+  function toggleCali(venueId, wrapId){ $(wrapId).style.display = $(venueId).value === 'cali' ? '' : 'none'; }
+  $('rVenue').addEventListener('change', () => toggleCali('rVenue','rCaliWrap'));
+  $('writeReply').addEventListener('click', () => {
+    const text = $('replyText').value;
+    if (!text.trim()){ toast('Paste their message first'); return; }
+    const ctx = {firstName: $('rName').value.trim(), venue: $('rVenue').value || null, date: dateFromInput($('rDate').value), guests: parseInt($('rGuests').value, 10) || null, caliSession: $('rCali').value};
+    const detected = detectScenarios(text);
+    const id = scenarioSel.value === 'auto' ? detected[0].id : scenarioSel.value;
+    const r = writeReply(ctx, text, id, state.settings, new Date());
+    const label = (SCENARIOS.find(x => x.id === id) || {label:'General reply'}).label;
+    let h = '<div class="card"><div class="row between"><h2>Reply</h2><span class="tiny">Read as: ' + esc(label) + (scenarioSel.value === 'auto' && detected.length > 1 && detected[0].score ? ', also ' + esc(detected.slice(1,3).map(d => d.label.toLowerCase()).join(', ')) : '') + '</span></div>';
+    if (r.analysis && r.analysis.flags && r.analysis.flags.length) h += flagsHTML(r.analysis.flags);
+    if (r.lead && (r.lead.date || r.lead.guests)) h += '<p class="quiet mt">Using ' + esc([r.lead.venue ? VENUES[r.lead.venue].name : '', r.lead.date ? fmtDate(r.lead.date) : '', r.lead.guests ? r.lead.guests + ' guests' : ''].filter(Boolean).join(', ')) + '.</p>';
+    h += msgBlock('SMS reply', r.sms, 'rSms');
+    h += msgBlock('Email subject', r.email.subject, 'rSubj');
+    h += msgBlock('Email reply', r.email.body, 'rEmail');
+    h += msgBlock('CRM note', r.crm, 'rCrm');
+    h += '</div>';
+    const out = $('replyOut'); out.innerHTML = h; wireCopies(out); scrollToOut(out);
+  });
+  $('clearReply').addEventListener('click', () => { $('replyText').value = ''; scenarioSel.value = 'auto'; $('replyOut').innerHTML = '<div class="card"><div class="empty">Paste their message and press Write reply.</div></div>'; });
+
+  /* ---------- quote tab ---------- */
+  function prefillQuote(){
+    const lead = state.lead;
+    let defaults = null;
+    if (lead){
+      if (!$('qName').value) $('qName').value = lead.firstName || '';
+      if (lead.venue && !$('qVenue').dataset.touched) $('qVenue').value = lead.venue;
+      if (!$('qDate').value) $('qDate').value = dateInputValue(lead.date);
+      if (!$('qGuests').value) $('qGuests').value = lead.guests || '';
+      $('qCali').value = state.caliSession;
+      if (state.an && state.an.optionA && !$('qVenue').dataset.touched && !$('qBooth').dataset.touched) defaults = {boothId: state.an.optionA.booth.id, pkgN: state.an.optionA.pkg ? state.an.optionA.pkg.n : null};
+    }
+    refreshQuoteLists(defaults);
+  }
+  function quoteSession(){
+    const v = VENUES[$('qVenue').value]; const d = dateFromInput($('qDate').value);
+    return resolveSession(v, d, {caliSession: $('qCali').value});
+  }
+  function refreshQuoteLists(defaults){
+    defaults = defaults || {};
+    const v = VENUES[$('qVenue').value]; const s = quoteSession(); const d = dateFromInput($('qDate').value);
+    $('qSessionWrap').style.display = (v.id === 'cali' && d && d.getDay() === 6) ? '' : 'none';
+    $('qSundayWrap').style.display = v.id === 'taxoffice' ? '' : 'none';
+    const hol = holidayInfo(d); $('qHoliday').checked = !!(hol && hol.type === 'holiday');
+    if (v.id === 'taxoffice') $('qSunday').checked = !!(d && d.getDay() === 0);
+    const bsel = $('qBooth'); const prev = defaults.boothId || bsel.value; bsel.innerHTML = '';
+    v.booths.filter(b => !b.enquiry).forEach(b => {
+      const price = priceOf(v, b, s);
+      const o = document.createElement('option'); o.value = b.id;
+      o.textContent = b.name + ', holds ' + boothCap(v, b, s) + (price != null ? ', ' + fmtMoney(price) : ', not priced for that day');
+      if (price == null) o.disabled = true;
+      bsel.appendChild(o);
+    });
+    if ([...bsel.options].some(o => o.value === prev && !o.disabled)) bsel.value = prev;
+    else { const first = [...bsel.options].find(o => !o.disabled); if (first) bsel.value = first.value; }
+    const psel = $('qPkg'); const prevP = defaults.pkgN ? String(defaults.pkgN) : (psel.options.length ? psel.value : null); psel.innerHTML = '<option value="">Custom bottle service spend</option>';
+    v.packages.forEach(p => { const o = document.createElement('option'); o.value = p.n; o.textContent = 'Package ' + p.n + ', ' + fmtMoney(p.price) + ', ' + p.items.slice(0,3).join(', '); psel.appendChild(o); });
+    if (prevP !== null && [...psel.options].some(o => o.value === prevP)) psel.value = prevP; else psel.value = v.packages[0] ? String(v.packages[0].n) : '';
+    $('qCustomWrap').style.display = psel.value ? 'none' : '';
+  }
+  ['qVenue','qDate','qCali'].forEach(id => $(id).addEventListener('change', () => { if (id === 'qVenue') $('qVenue').dataset.touched = '1'; refreshQuoteLists(); }));
+  $('qBooth').addEventListener('change', () => { $('qBooth').dataset.touched = '1'; });
+  $('qPkg').addEventListener('change', () => { $('qCustomWrap').style.display = $('qPkg').value ? 'none' : ''; });
+  $('buildQuote').addEventListener('click', () => {
+    const v = VENUES[$('qVenue').value]; const s = quoteSession(); const d = dateFromInput($('qDate').value);
+    if (!s.open || !s.key){ $('quoteOut').innerHTML = '<div class="card">' + flagsHTML([{level:'warn', text:(d ? fmtDate(d) : 'That date') + ' is not a day ' + v.name + ' runs booths. ' + v.closedNote}]) + '</div>'; return; }
+    const q = {venue:v.id, boothId:$('qBooth').value, session:s, pkgN: parseInt($('qPkg').value, 10) || null, customSpend: parseFloat($('qCustom').value) || 0, onlineSurcharge: $('qOnline').checked, publicHoliday: $('qHoliday').checked, sundaySurcharge: v.id === 'taxoffice' && $('qSunday').checked, mixes: $('qMixes').value.trim(), signage: $('qSignage').value.trim(), arrival: $('qArrival').value.trim(), depositPaid: $('qDeposit').value ? parseFloat($('qDeposit').value) : null};
+    if (!q.boothId){ toast('Pick a booth'); return; }
+    const r = computeQuote(q);
+    const ctx = {firstName: $('qName').value.trim(), date:d, guests: parseInt($('qGuests').value, 10) || null};
+    const email = writeQuoteEmail(q, r, ctx, state.settings);
+    let h = '<div class="card"><h2>' + esc(r.booth.name) + ' on ' + esc(cap(dayPhrase(s)).replace(/^A /, '')) + '</h2>';
+    h += '<div class="total"><span>Minimum spend</span><span>' + esc(fmtMoney(r.min)) + '</span></div>';
+    h += '<div class="total"><span>' + esc(r.pkg ? 'Package ' + r.pkg.n : 'Bottle service') + '</span><span>' + esc(fmtMoney(r.spend)) + '</span></div>';
+    h += '<div class="total"><span>Staff gratuity 5 percent</span><span>' + esc(fmtMoney(r.gratuity)) + '</span></div>';
+    if (r.holiday) h += '<div class="total"><span>Public holiday 15 percent</span><span>' + esc(fmtMoney(r.holiday)) + '</span></div>';
+    if (r.sunday) h += '<div class="total"><span>Sunday 10 percent</span><span>' + esc(fmtMoney(r.sunday)) + '</span></div>';
+    if (r.online) h += '<div class="total"><span>Online card 2.1 percent</span><span>' + esc(fmtMoney(r.online)) + '</span></div>';
+    h += '<div class="total big"><span>Total</span><span>' + esc(fmtMoney(r.total)) + '</span></div>';
+    h += '<div class="total"><span>Deposit</span><span>' + esc(fmtMoney(r.deposit)) + '</span></div>';
+    h += '<div class="total"><span>Balance before the ' + (v.id === 'cali' ? 'day' : 'night') + '</span><span>' + esc(fmtMoney(r.balance)) + '</span></div>';
+    if (r.pkg) h += '<p class="quiet mt">' + esc(r.pkg.items.join(', ')) + '</p>';
+    h += '</div>';
+    h += '<div class="card"><h2>Messages</h2>';
+    h += msgBlock('Email subject', email.subject, 'qSubj');
+    h += msgBlock('Summary email', email.body, 'qEmail');
+    h += msgBlock('SevenRooms note', writeSevenRooms(q, r, ctx), 'q7r');
+    h += msgBlock('CRM note', writeQuoteCRM(q, r, ctx), 'qCrm');
+    h += '</div>';
+    const out = $('quoteOut'); out.innerHTML = h; wireCopies(out); scrollToOut(out);
+  });
+
+  /* ---------- venues tab ---------- */
+  const pick = $('venuePick');
+  VENUE_ORDER.forEach((k, i) => { const b = document.createElement('button'); b.textContent = VENUES[k].name; b.dataset.v = k; if (i === 0) b.classList.add('on'); b.addEventListener('click', () => { pick.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b)); renderVenue(k); }); pick.appendChild(b); });
+  function priceTable(v){
+    if (v.seasonal){
+      const cols = [['fri','Fri night'],['satday','Sat day'],['satnight','Sat night'],['sun','Sun']];
+      let t = '';
+      for (const season of ['summer','winter']){
+        t += '<h3 class="mt">' + (season === 'summer' ? 'September to March' : 'April to August') + '</h3><div class="tablewrap"><table><tr><th>Area</th><th class="num">Holds</th>' + cols.map(c => '<th class="num">' + c[1] + '</th>').join('') + '</tr>';
+        v.booths.forEach(b => { const p = b.prices[season] || {}; t += '<tr><td>' + esc(b.name) + (b.type === 'daybed' ? ' <span class="tiny">welcome pack</span>' : '') + '</td><td class="num">' + (season === 'winter' && b.winterCap ? b.winterCap : b.cap) + '</td>' + cols.map(c => '<td class="num">' + (p[c[0]] != null ? esc(fmtMoney(p[c[0]])) : 'enquire') + '</td>').join('') + '</tr>'; });
+        t += '</table></div>';
+      }
+      return t;
+    }
+    const cols = Object.keys(v.days).map(k => [k, k === 'monthu' ? 'Mon to Thu' : cap(v.days[k])]);
+    let t = '<div class="tablewrap"><table><tr><th>Booth</th><th class="num">Holds</th>' + cols.map(c => '<th class="num">' + c[1] + '</th>').join('') + '</tr>';
+    v.booths.forEach(b => { t += '<tr><td>' + esc(b.name) + '<br><span class="tiny">' + esc(cap(b.blurb)) + '</span></td><td class="num">' + b.cap + '</td>' + cols.map(c => '<td class="num">' + (b.enquiry ? 'enquire' : b.prices[c[0]] != null ? esc(fmtMoney(b.prices[c[0]])) : 'n/a') + '</td>').join('') + '</tr>'; });
+    return t + '</table></div>';
+  }
+  function renderVenue(k){
+    const v = VENUES[k];
+    let h = '<div class="card"><h2>' + esc(v.fullName) + '</h2><p class="quiet">' + esc(v.vibe) + '</p>';
+    h += '<div class="facts mt"><div class="fact sm"><b>' + esc(v.address) + '</b><span>Address</span></div><div class="fact sm"><b>' + esc(v.phone) + '</b><span>Phone</span></div><div class="fact sm"><b>' + esc(v.hours) + '</b><span>Hours</span></div><div class="fact sm"><b>' + esc(v.web) + '</b><span>Website</span></div></div>';
+    h += '</div>';
+    h += '<div class="card"><h2>Booths and minimum spends</h2><p class="quiet">Minimum spend goes on bottle service, plus 5 percent gratuity. Always follow the website for special events.</p>' + priceTable(v) + '</div>';
+    h += '<div class="card"><h2>Packages</h2>' + v.packages.map(p => '<div class="pkg"><b>Package ' + p.n + '<br>' + esc(fmtMoney(p.price)) + '</b><span>' + esc(p.items.join(', ')) + '</span></div>').join('');
+    if (v.spray) h += '<div class="pkg"><b>Spray packages</b><span>' + esc(v.spray.map(sp => sp.qty + ' x Veuve Clicquot 750ml ' + fmtMoney(sp.price) + ', saves ' + fmtMoney(sp.save)).join('. ')) + '. Waitresses bring the bottles out in ponchos with spray guns.</span></div>';
+    h += '</div>';
+    h += '<div class="card"><h2>Rules that matter</h2><ul class="rules">' + v.rules.map(r => '<li>' + esc(r) + '</li>').join('') + '</ul></div>';
+    const cats = [...new Set(v.bottles.map(b => b.cat))];
+    h += '<div class="card"><h2>Bottle list</h2>' + cats.map(c => '<details><summary>' + esc(c) + '</summary><table>' + v.bottles.filter(b => b.cat === c).map(b => '<tr><td>' + esc(b.name) + '</td><td class="num">' + esc(fmtMoney(b.price)) + '</td></tr>').join('') + '</table></details>').join('') + '</div>';
+    $('venueOut').innerHTML = h;
+  }
+  renderVenue(VENUE_ORDER[0]);
+  refreshQuoteLists();
+})();
+
+</script>
+</body>
+</html>
