@@ -1122,7 +1122,7 @@ function buildOptions(lead, opts){
   if (!lead.guests) out.flags.push({level:'warn', text:'No guest count. The booth below assumes a small group, so ask for numbers.'});
   if (!lead.date) out.flags.push({level:'warn', text:'No date found. The pricing below assumes the next ' + (venue.id === 'cali' ? 'Saturday day session' : 'Friday') + '. Add the date to be sure.'});
   if (lead.fromCity) out.flags.push({level:'info', text:'They are coming from ' + lead.fromCity.name + '. The email gives that a friendly nod.'});
-  if (lead.wantsBottleList) out.flags.push({level:'info', text:'They asked for the bottle list, so the email includes the full list.'});
+  if (lead.wantsBottleList) out.flags.push({level:'info', text:'They asked for the bottle list. Attach the brochure to the email.'});
   if (lead.date){
     const days = daysFromToday(lead.date, today);
     if (days < 0){ out.pastDate = true; out.flags.push({level:'warn', text:'That date has already passed. The messages say so and ask for the right date.'}); }
@@ -1320,107 +1320,102 @@ function askLine(lead){
 }
 
 /* ---------- intro email ---------- */
+function callLine(settings){
+  return (settings && settings.mobile) ? 'Any questions at all, give me a call on ' + settings.mobile + ' and I will sort it out.' : 'Any questions at all, give me a call and I will sort it out.';
+}
+function pkgBlocksShort(label, pm){
+  let t = pm.pkg.items.join(', ') + '.';
+  if (pm.mode === 'inside') t += ' Sits inside your minimum spend with ' + fmtMoney(pm.leftover) + ' left over for extra bottles.';
+  else if (pm.mode === 'exact') t += ' Uses your minimum spend exactly.';
+  else t += ' ' + fmtMoney(pm.price) + ' plus ' + fmtMoney(pm.grat) + ' gratuity for your waitress, ' + fmtMoney(pm.total) + ' all up.';
+  return [{t:'b', text:label + ', Package ' + pm.pkg.n + ' at ' + fmtMoney(pm.price)}, {t:'l', text:t}];
+}
 function writeIntroEmail(lead, an, settings, today){
   today = today || new Date();
   const v = an.venue, first = lead.firstName || 'there';
   const B = [{t:'p', text:'Hi ' + first + ','}];
   if (!v){
-    B.push({t:'p', text:'Thanks for getting in touch. I would love to help you lock in a booth. Could you let me know which venue you are after, the date and how many are coming? I will send the options and pricing straight back.'});
+    B.push({t:'p', text:'Thanks for getting in touch. Could you let me know which venue you are after, the date and how many are coming? I will send the options and pricing straight back.'});
+    B.push({t:'p', text:callLine(settings)});
     B.push({t:'sig', lines:signoffLines(settings, null)});
     return {subject:'Your booth enquiry', blocks:B};
   }
   const occ = lead.occasion, s = an.priced || an.session, dn = dayNight(v, s);
   const subject = 'Your booth at ' + cap(v.prose) + (lead.date && !an.pastDate ? ' on ' + fmtDate(lead.date) : '');
   let p1 = 'Thanks for getting in touch about a booth at ' + v.prose + (lead.date && !an.pastDate ? ' on ' + fmtDate(lead.date) : '') + (occ ? ' for ' + occ.client : '') + '.';
-  if (lead.guests) p1 += ' I would love to help you put together a great ' + dn + ' for the ' + numWord(lead.guests) + ' of you.';
-  else p1 += ' I would love to help you put the ' + dn + ' together.';
-  if (lead.fromCity) p1 += ' Sounds like the perfect excuse for a trip ' + lead.fromCity.dir + ' from ' + lead.fromCity.name + '.';
+  if (lead.fromCity) p1 += ' Sounds like a great reason for a trip ' + lead.fromCity.dir + ' from ' + lead.fromCity.name + '.';
 
   if (an.handoff){
     B.push({t:'p', text:p1});
-    B.push({t:'p', text:'Groups of your size are looked after by our functions and events team, so I have passed your details to Bonnie, who will be in touch shortly with the right options for you. If you have any questions in the meantime, just reply here.'});
+    B.push({t:'p', text:'Groups of your size are looked after by our functions and events team, so I have passed your details to Bonnie, who will be in touch shortly with the right options for you.'});
+    B.push({t:'p', text:callLine(settings)});
     B.push({t:'sig', lines:signoffLines(settings, v)});
     return {subject, blocks:B};
   }
   if (an.pastDate){
     B.push({t:'p', text:p1});
-    B.push({t:'p', text:'Just a quick one, the date on your enquiry has already passed, so I want to make sure I have the right one. Let me know the date you had in mind and I will send the booth options and pricing straight through.'});
+    B.push({t:'p', text:'The date on your enquiry has already passed, so let me know the date you had in mind and I will send the options and pricing straight through.'});
+    B.push({t:'p', text:callLine(settings)});
     B.push({t:'sig', lines:signoffLines(settings, v)});
     return {subject, blocks:B};
   }
   if (an.closed){
     B.push({t:'p', text:p1});
-    let c = 'Just a heads up, ' + v.prose + ' ' + v.closedNote + '.';
-    if (v.id === 'cali') c += ' ' + nextSessionsLine(v, lead.date || today) + ' If one of those works for your group, let me know and I will send the options and pricing straight through.';
-    else c += ' If a Friday or Saturday works for your group, let me know the date and I will send the booth options and pricing straight through.' + (v.id !== 'bedroom' ? ' If you are set on that date, our sister venue Bedroom on Orchid Ave is open every night and I can look after you there too.' : '');
+    let c = cap(v.prose) + ' ' + v.closedNote + '.';
+    if (v.id === 'cali') c += ' ' + nextSessionsLine(v, lead.date || today) + ' Let me know which one works and I will send the options and pricing straight through.';
+    else c += ' If a Friday or Saturday works for your group, let me know the date and I will send the options and pricing straight through.' + (v.id !== 'bedroom' ? ' If you are set on that date, our sister venue Bedroom on Orchid Ave is open every night and I can look after you there too.' : '');
     B.push({t:'p', text:c});
-    B.push({t:'p', text:BLURB});
+    B.push({t:'p', text:callLine(settings)});
     B.push({t:'sig', lines:signoffLines(settings, v)});
     return {subject, blocks:B};
   }
-
-  const asked = [];
-  if (lead.wantsBottleList) asked.push('the bottle list');
-  if (lead.wantsPricing || lead.wantsPackages) asked.push('pricing');
-  if (asked.length) p1 += ' You asked for ' + joinList(asked) + ', so I have put it all below' + (lead.wantsBottleList ? ', along with a couple of package options that suit your group' : '') + '.';
+  if (lead.guests) p1 += ' Here is what I would suggest for the ' + numWord(lead.guests) + ' of you.';
   else p1 += ' Here is what I would suggest.';
   B.push({t:'p', text:p1});
 
   if (an.booth){
     B.push({t:'h', text:'Your booth'});
-    B.push({t:'b', text:cap(an.booth.name)});
-    B.push({t:'l', text:cap(an.booth.blurb) + '. It holds up to ' + an.cap + (lead.guests && !an.extraGuests ? ', so it is a nice fit for your group.' : '.')});
+    B.push({t:'b', text:cap(an.booth.name) + ', holds up to ' + an.cap});
+    B.push({t:'l', text:cap(an.booth.blurb) + '.'});
     B.push({t:'rows', rows:boothRows(an)});
-    B.push({t:'p', text:minSpendExplainer(v, dn)});
-    if (an.extraGuests) B.push({t:'p', text:cap(an.booth.name) + ' is the biggest booth we can book, so for ' + lead.guests + ' you would add ' + an.extraGuests + ' ' + entryWord(v, an.extraGuests) + ' for the extras' + (an.extraGuests > 4 ? ', or we can look at two booths side by side' : '') + '.' + (an.enquiryBooths && an.enquiryBooths.length ? ' ' + joinList(an.enquiryBooths.map(b => cap(b.name) + ' holds ' + b.cap)) + ' and is priced on enquiry, so I can check that with the venue for you too.' : '')});
-    if (an.priced && an.priced.assumed){ const satS = resolveSession(v, nextDay(today, 6), {caliSession:'day'}); const satP = priceOf(v, an.booth, satS); if (satP && satP !== an.money.min && v.id !== 'cali') B.push({t:'p', text:'On a Saturday the same booth is ' + fmtMoney(satP) + ', plus the 5 percent gratuity.'}); const al = askLine(lead); if (al) B.push({t:'p', text:al}); }
+    let ex = 'The minimum spend is a credit that all goes on your ' + drinksWord(v) + ' on the ' + dn + ', so there is nothing extra on top.';
+    if (an.extraGuests) ex += ' It holds up to ' + an.cap + ', so for ' + lead.guests + ' you would add ' + an.extraGuests + ' ' + entryWord(v, an.extraGuests) + ' for the extras.';
+    if (an.priced && an.priced.assumed){ const satS = resolveSession(v, nextDay(today, 6), {caliSession:'day'}); const satP = priceOf(v, an.booth, satS); if (satP && satP !== an.money.min && v.id !== 'cali') ex += ' On a Saturday the same booth is ' + fmtMoney(satP) + '.'; ex += ' Let me know the date and numbers and I will confirm it.'; }
+    B.push({t:'p', text:ex});
+    if (v.id === 'cali' || an.lateArrival) B.push({t:'p', text:timingLine(v, s, an.lateArrival)});
 
     if (an.simple){
-      B.push({t:'h', text:'Packages that suit your group'});
-      B.push({t:'b', text:'Keep it simple, Package ' + an.simple.pkg.n + ' at ' + fmtMoney(an.simple.price)});
-      B.push({t:'l', text:cap(itemsLine(an.simple.pkg)) + '.'});
-      const n1 = packageNote(an.simple, dn);
-      if (n1) B.push({t:'l', text:n1}); else B.push({t:'rows', rows:packageRows(an.simple)});
-      if (an.stepUp){
-        B.push({t:'gap'});
-        B.push({t:'b', text:'Step it up, Package ' + an.stepUp.pkg.n + ' at ' + fmtMoney(an.stepUp.price)});
-        B.push({t:'l', text:cap(itemsLine(an.stepUp.pkg)) + '.'});
-        const n2 = packageNote(an.stepUp, dn);
-        if (n2) B.push({t:'l', text:n2}); else B.push({t:'rows', rows:packageRows(an.stepUp)});
-      }
-      let pk = 'Packages are set as listed, so the inclusions cannot be swapped, but you are always welcome to build your own tab from the bottle list instead. ' + houseLine(v, lead);
+      B.push({t:'h', text:'Packages'});
+      B.push(...pkgBlocksShort('Keep it simple', an.simple));
+      if (an.stepUp){ B.push({t:'gap'}); B.push(...pkgBlocksShort('Step it up', an.stepUp)); }
+      let pk = 'Packages are fixed as listed. The full bottle list and all the packages are in the brochure attached.';
       const mb = missingBrandLine(v, lead);
       if (mb) pk += ' ' + mb;
-      if (!lead.wantsBottleList) pk += ' Happy to send the full bottle list through if you would like to see it.';
       if (lead.budget && lead.budget < an.money.min){
         const friS = resolveSession(v, nextDay(today, 5), {}); const friP = priceOf(v, an.booth, friS);
-        pk += ' You mentioned around ' + fmtMoney(lead.budget) + '. ' + cap(an.booth.name) + ' at ' + fmtMoney(an.money.min) + ' is the cheapest booth on ' + dayPhrase(s) + ', so it is close' + (s.key && s.key !== 'fri' && friP && friP < an.money.min ? ', and if the date can move, the same booth is ' + fmtMoney(friP) + ' on a Friday.' : '.');
+        pk += ' ' + cap(an.booth.name) + ' is the cheapest booth on ' + dayPhrase(s) + (s.key && s.key !== 'fri' && friP && friP < an.money.min ? ', and it is ' + fmtMoney(friP) + ' on a Friday if the date can move.' : '.');
       }
       B.push({t:'p', text:pk});
     }
-    if (lead.wantsBottleList) B.push(...bottleListBlocks(v));
-
-    B.push({t:'h', text:'A few things to know'});
-    B.push({t:'p', text:timingLine(v, s, an.lateArrival)});
-    B.push({t:'p', text:instagramLine(occ)});
-    if (v.id === 'cali') B.push({t:'p', text:'Every package comes with a complimentary food package of ' + CALI_FOOD + '. Your booth also includes express VIP entry with a host escort, a personal waitress and towels for everyone, and the pool is open until 8pm.'});
     if (an.daybeds && an.daybeds.length){
       const d = an.daybeds[0];
-      B.push({t:'p', text:'If you would rather keep it really simple, a ' + d.booth.name + ' is a flat ' + fmtMoney(d.price) + ' package fee for the ' + s.dayWord + ' with ' + d.inc + ' included, and no gratuity on top. The booth gives you more space and your own waitress, so it is the one I would go for, but the choice is yours.'});
+      B.push({t:'p', text:'If you would rather keep it simple, a ' + d.booth.name + ' is a flat ' + fmtMoney(d.price) + ' package fee with ' + d.inc + ' included, no gratuity on top.'});
     }
-    const hol = holidayInfo(lead.date);
-    if (hol && hol.type === 'holiday') B.push({t:'p', text:'That date is a public holiday, so a 15 percent surcharge applies on the ' + dn + '.'});
-    if (v.id === 'taxoffice' && lead.date && lead.date.getDay() === 0) B.push({t:'p', text:'Sundays carry a 10 percent surcharge on food and drinks.'});
 
     B.push({t:'h', text:'Locking it in'});
-    let lock = 'A 20 percent deposit of ' + fmtMoney(an.money.deposit) + ' locks the booth in, and the balance of ' + fmtMoney(an.money.balance) + ' is paid in venue on the ' + dn + '.';
-    if (an.stepUp && an.stepUp.mode === 'above') lock += ' If you go with the bigger package, the deposit is 20 percent of that total instead.';
+    const above = [an.simple, an.stepUp].filter(x => x && x.mode === 'above');
+    let lock = above.length
+      ? 'A 20 percent deposit locks the booth in, that is ' + fmtMoney(an.money.deposit) + ' on the minimum spend' + above.map((x, i) => (i === above.length - 1 ? ' or ' : ', ') + fmtMoney(x.deposit) + ' with Package ' + x.pkg.n).join('') + ', and the balance is paid in venue on the ' + dn + '.'
+      : 'A 20 percent deposit of ' + fmtMoney(an.money.deposit) + ' locks the booth in and the balance of ' + fmtMoney(an.money.balance) + ' is paid in venue on the ' + dn + '.';
+    const hol = holidayInfo(lead.date);
+    if (hol && hol.type === 'holiday') lock += ' That date is a public holiday, so a 15 percent surcharge applies on the ' + dn + '.';
+    if (v.id === 'taxoffice' && lead.date && lead.date.getDay() === 0) lock += ' Sundays carry a 10 percent surcharge.';
     B.push({t:'p', text:lock});
     B.push({t:'p', text:BLURB});
-    B.push({t:'p', text:contactLine(settings)});
   } else {
     B.push({t:'p', text:askLine(lead) || 'Let me know a few more details and I will send the right options straight back.'});
   }
+  B.push({t:'p', text:callLine(settings)});
   B.push({t:'sig', lines:signoffLines(settings, v)});
   return {subject, blocks:B};
 }
@@ -1467,7 +1462,7 @@ function writeIntroSMS(lead, an, settings, today){
     if (an.extraGuests) L.push('It holds up to ' + an.cap + ', so for ' + lead.guests + ' you would add ' + an.extraGuests + ' ' + entryWord(v, an.extraGuests) + ' for the extras');
     if (an.priced && an.priced.assumed) L.push('That is ' + an.priced.dayWord + ' pricing, let me know your date and numbers and I will confirm it');
     L.push('A 20 percent deposit locks it in and the rest is paid in venue on the ' + dayNight(v, an.priced));
-    L.push('I have just emailed you the full details with a couple of package options, give me a shout here with any questions');
+    L.push('I have emailed you the details and the brochure, any questions give me a call' + ((settings && settings.mobile) ? ' on ' + settings.mobile : ''));
   } else {
     L.push('Let me know the date and how many are coming and I will send the options straight back');
   }
@@ -1693,32 +1688,24 @@ function writeReply(ctx, text, scenarioId, settings, today){
         B.push({t:'p', text:'To get it booked I just need the full name for the booking, the best mobile and email, and which package you are going with. I will then send the payment link for the 20 percent deposit, and the balance is paid in venue on the ' + dn + '.'});
         sms.push('Hi ' + first + ', great news. Send me the full name for the booking plus your best mobile and email and I will send the payment link', 'A 20 percent deposit locks it in and the rest is paid in venue on the ' + dn);
       }
-      B.push({t:'p', text:'Once the deposit is through you will get a confirmation and the booth is yours. ' + BLURB});
+      B.push({t:'p', text:'Once the deposit is through you will get a confirmation and the booth is yours.'});
       break;
     }
     case 'price': {
       if (v && an.booth && open){
         B.push({t:'h', text:'Your booth'});
-        B.push({t:'b', text:cap(an.booth.name)});
-        B.push({t:'l', text:cap(an.booth.blurb) + '. It holds up to ' + an.cap + '.'});
+        B.push({t:'b', text:cap(an.booth.name) + ', holds up to ' + an.cap});
         B.push({t:'rows', rows:boothRows(an)});
-        B.push({t:'p', text:minSpendExplainer(v, dn)});
+        B.push({t:'p', text:'The minimum spend is a credit that all goes on your ' + drinksWord(v) + ' on the ' + dn + ', so there is nothing extra on top.'});
         if (an.simple){
-          B.push({t:'h', text:'Packages that suit your group'});
-          B.push({t:'b', text:'Keep it simple, Package ' + an.simple.pkg.n + ' at ' + fmtMoney(an.simple.price)});
-          B.push({t:'l', text:cap(itemsLine(an.simple.pkg)) + '.'});
-          const n1 = packageNote(an.simple, dn); if (n1) B.push({t:'l', text:n1}); else B.push({t:'rows', rows:packageRows(an.simple)});
-          if (an.stepUp){
-            B.push({t:'gap'});
-            B.push({t:'b', text:'Step it up, Package ' + an.stepUp.pkg.n + ' at ' + fmtMoney(an.stepUp.price)});
-            B.push({t:'l', text:cap(itemsLine(an.stepUp.pkg)) + '.'});
-            const n2 = packageNote(an.stepUp, dn); if (n2) B.push({t:'l', text:n2}); else B.push({t:'rows', rows:packageRows(an.stepUp)});
-          }
+          B.push({t:'h', text:'Packages'});
+          B.push(...pkgBlocksShort('Keep it simple', an.simple));
+          if (an.stepUp){ B.push({t:'gap'}); B.push(...pkgBlocksShort('Step it up', an.stepUp)); }
         }
-        let pk = 'Packages are set as listed, so the inclusions cannot be swapped, but you are always welcome to build your own tab from the bottle list. ' + houseLine(v, lead);
-        const mb = missingBrandLine(v, lead); if (mb) pk += ' ' + mb;
+        let pk = 'Packages are fixed as listed. The full bottle list and all the packages are in the brochure attached.';
+        const mb = missingBrandLine(v, lead); pk += ' ' + (mb || houseLine(v, lead));
         B.push({t:'p', text:pk});
-        B.push({t:'p', text:'A 20 percent deposit of ' + fmtMoney(m.deposit) + ' locks the booth in and the balance is paid in venue on the ' + dn + '. ' + contactLine(settings)});
+        B.push({t:'p', text:'A 20 percent deposit of ' + fmtMoney(m.deposit) + ' locks the booth in and the balance is paid in venue on the ' + dn + '.'});
         sms.push('Hi ' + first + ', ' + boothLine(), (an.simple ? 'Package ' + an.simple.pkg.n + ' at ' + fmtMoney(an.simple.price) + (an.simple.mode === 'above' ? '' : ' sits inside the minimum spend') + (an.stepUp ? ', or Package ' + an.stepUp.pkg.n + ' at ' + fmtMoney(an.stepUp.price) + ' if you want to step it up' : '') : ''), 'A 20 percent deposit locks it in, I can email the full breakdown if that helps');
       } else if (v && an.closed){
         B.push({t:'p', text:cap(v.prose) + ' ' + v.closedNote + '. Let me know a ' + (v.id === 'cali' ? 'Friday, Saturday or Sunday' : 'Friday or Saturday') + ' that works and I will send the booth options and pricing straight back.'});
@@ -1803,9 +1790,8 @@ function writeReply(ctx, text, scenarioId, settings, today){
         const catLines = cats.map(t => { const alt = v.bottles.find(x => x.name.toLowerCase().startsWith(CATEGORY_ALTERNATIVES[t].toLowerCase())); return alt ? 'For ' + t + ' most groups go ' + alt.name + ' at ' + fmtMoney(alt.price) + '.' : ''; }).filter(Boolean);
         if (catLines.length) p += ' ' + catLines.join(' ');
         B.push({t:'p', text:p});
-        B.push({t:'p', text:'Anything you pick from the list goes toward the minimum spend, and the packages are the best value if you want it sorted in one go. The full list is below.'});
-        B.push(...bottleListBlocks(v));
-        sms.push('Hi ' + first + ', ' + p.replace(/\.$/, ''), 'Anything from the list goes toward the minimum spend, I have emailed you the full bottle list');
+        B.push({t:'p', text:'Anything you pick from the list goes toward the minimum spend, and the packages are the best value if you want it sorted in one go. The full bottle list is in the brochure attached.'});
+        sms.push('Hi ' + first + ', ' + p.replace(/\.$/, ''), 'Anything from the list goes toward the minimum spend, the full bottle list is in the brochure I emailed you');
       } else { B.push({t:'p', text:'Belvedere is the house vodka across our venues at $400 a bottle, with tequila, whisky, gin and champagne on every list. ' + ask}); sms.push('Hi ' + first + ', Belvedere is $400 a bottle at all our venues, ' + lower(ask)); }
       break;
     }
@@ -1877,7 +1863,7 @@ function writeReply(ctx, text, scenarioId, settings, today){
   const detected = detectScenarios(text).map(x => x.id);
   if (scenarioId !== 'time' && detected.includes('time') && v && an.lateArrival) B.push({t:'p', text:timingLine(v, s, an.lateArrival)});
   if (!['bottle','price','swap'].includes(scenarioId) && v && lead.prefs.brands.some(b => !b.stocked)) B.push({t:'p', text:missingBrandLine(v, lead)});
-  if (!['book','thanks'].includes(scenarioId)) B.push({t:'p', text:BLURB});
+  if (!['thanks'].includes(scenarioId)) B.push({t:'p', text:callLine(settings)});
   B.push({t:'sig', lines:signoffLines(settings, v)});
   return {email:{subject: v ? 'Re: your booth at ' + cap(v.prose) + (lead.date ? ' on ' + fmtDate(lead.date) : '') : 'Re: your booking', blocks:B}, sms:sms.filter(Boolean).join('\n'), crm:writeReplyCRM(scenarioId, lead, an, v, chosen), analysis:an, lead};
 }
@@ -1944,7 +1930,8 @@ function writeQuoteEmail(q, r, ctx, settings){
   B.push({t:'p', text:'The cardholder needs to be there on the ' + dn + ' with the card used for the deposit and matching photo ID, and everyone needs valid photo ID.'});
   if (v.id === 'cali') B.push({t:'p', text:'Every package comes with a complimentary food package of ' + CALI_FOOD + '. Towels are provided for everyone and the pool is open until 8pm.'});
   B.push({t:'h', text:'Next step'});
-  B.push({t:'p', text:'Reply with a yes and I will send the payment link for the deposit straight through. ' + BLURB});
+  B.push({t:'p', text:'Reply with a yes and I will send the payment link for the deposit straight through.'});
+  B.push({t:'p', text:callLine(settings)});
   B.push({t:'sig', lines:signoffLines(settings, v)});
   return {subject:'Your booking at ' + cap(v.prose) + (ctx.date ? ' on ' + fmtDate(ctx.date) : ''), blocks:B};
 }
