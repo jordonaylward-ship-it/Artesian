@@ -294,14 +294,14 @@ details.cat[open] summary::after{content:"\2212"}
           <div class="fields two">
             <div><label class="f">Sign wording, two or three words</label><input type="text" id="qSignage" placeholder="Happy 30th Saxon"><div class="small mt8" id="qSignHint"></div></div>
             <div><label class="f">Arrival time</label><input type="text" id="qArrival" placeholder="10.30pm"></div>
-            <div><label class="f">Deposit paid, if different</label><input type="number" id="qDeposit" min="0" placeholder="Blank for 20 percent"></div>
+            <div><label class="f">Deposit paid, if different</label><input type="number" id="qDeposit" min="0" placeholder="Blank for 20%"></div>
           </div>
           <div class="row mt">
-            <label class="check"><input type="checkbox" id="qOnline" checked> 2.1 percent card surcharge on the online deposit</label>
+            <label class="check"><input type="checkbox" id="qOnline" checked> 2.1% card surcharge on the online deposit</label>
           </div>
           <div class="row mt8">
-            <label class="check"><input type="checkbox" id="qHoliday"> 15 percent public holiday</label>
-            <label class="check" id="qSundayWrap" style="display:none"><input type="checkbox" id="qSunday"> 10 percent Sunday</label>
+            <label class="check"><input type="checkbox" id="qHoliday"> 15% public holiday</label>
+            <label class="check" id="qSundayWrap" style="display:none"><input type="checkbox" id="qSunday"> 10% Sunday</label>
           </div>
           <div class="row mt"><button class="btn" id="buildQuote">Build quote</button></div>
         </div>
@@ -605,8 +605,8 @@ const CALI_PACKAGES = [
 const CLUB_RULES = [
   'Booths must be checked in before 11pm or the booking can be released.',
   'Two 700ml bottles give two hours of bottle service. A 1.75L bottle or bigger gives three hours or more.',
-  'Minimum spend goes on bottle service. A 5 percent gratuity for the waitress is added on top of every booth booking.',
-  'Online payments carry a 2.1 percent card surcharge. Public holidays carry a 15 percent surcharge.',
+  'Minimum spend goes on bottle service. A 5% gratuity for the waitress is added on top of every booth booking.',
+  'Online payments carry a 2.1% card surcharge. Public holidays carry a 15% surcharge.',
   'Extra guests above the booth capacity need a priority entry each.',
   'Date changes need 96 hours notice. No shows and cancellations inside 96 hours forfeit the booking. Minimum spends are non refundable.',
   'The card used for the booking must be shown on the night. Everyone needs valid photo ID and must be 18 or over.',
@@ -679,14 +679,14 @@ const VENUES = {
     days:{fri:'Friday', sat:'Saturday'}, closedNote:'runs late night booths on Fridays and Saturdays', night:true,
     rules:[
       'Guests must check in before the time on the booking confirmation or the booth can be released.',
-      'Minimum spend goes on bottle service. A 5 percent gratuity for the waitress is added on top of the minimum spend.',
+      'Minimum spend goes on bottle service. A 5% gratuity for the waitress is added on top of the minimum spend.',
       'The card and matching photo ID of the cardholder must be shown at check in. Everyone needs valid photo ID and must be 18 or over.',
-      'A variable card surcharge applies. Public holidays carry a 15 percent surcharge and Sundays a 10 percent surcharge.',
+      'A variable card surcharge applies. Public holidays carry a 15% surcharge and Sundays a 10% surcharge.',
       'Date changes need 96 hours notice. No shows and cancellations inside 96 hours forfeit the booking. All sales are final.',
       'Smart casual dress. No singlets, thongs, sports or athletic wear, board shorts, offensive prints, see through clothing, chains, baggy clothing or hard soled shoes.',
       'No neck, hand, face or offensive tattoos. Sleeve tattoos need a long sleeve shirt.',
       'The Tax Booths are available Friday and Saturday from 9pm, as two booths of 8 to 10 or one of 20, pricing on enquiry.',
-      'Functions over 10 people in a private area carry a 10 percent gratuity and a 20 percent deposit.',
+      'Functions over 10 people in a private area carry a 10% gratuity and a 20% deposit.',
       'Packages are fixed as listed, no swapping inclusions. Mixers are a pick of three from the mixer list.',
       'Always check the website pricing for special events.'
     ],
@@ -713,11 +713,11 @@ const VENUES = {
     seasonal:true,
     rules:[
       'Day bookings run 12pm to 6pm and must be checked in by 1pm. Night bookings run 7pm to close and must be checked in by 8pm. Friday bookings and arrivals are from 5pm.',
-      'Minimum spend goes on food and drinks, standard mixers, juices and sodas included. A 5 percent gratuity for the waitress is added on top.',
+      'Minimum spend goes on food and drinks, standard mixers, juices and sodas included. A 5% gratuity for the waitress is added on top.',
       'Daybeds are a flat package fee with inclusions, not a minimum spend, and no gratuity is added.',
       'Every booth and cabana booking must choose a bottle service option or a package, and must include some food.',
       'Every package includes a complimentary food package of ' + CALI_FOOD + '.',
-      'Online payments carry a 2.1 percent card surcharge. Public holidays carry a 15 percent surcharge.',
+      'Online payments carry a 2.1% card surcharge. Public holidays carry a 15% surcharge.',
       'Booths include express VIP entry with a host escort, a personal waitress and beach towels for everyone. No outside towels.',
       'Bottle service on a daybed needs an extra $1,000 spend arranged 48 hours ahead. Daybeds are pre allocated, you cannot pick a specific one.',
       'Extra guests above the booking capacity need an express entry each.',
@@ -1128,9 +1128,9 @@ function buildOptions(lead, opts){
     if (days < 0){ out.pastDate = true; out.flags.push({level:'warn', text:'That date has already passed. The messages say so and ask for the right date.'}); }
     else if (days <= 2) out.flags.push({level:'warn', text:'Very short notice, ' + (days === 0 ? 'it is today' : days === 1 ? 'it is tomorrow' : 'it is two days away') + '. Get the deposit link out straight away.'});
     const hol = holidayInfo(lead.date);
-    if (hol && hol.type === 'holiday') out.flags.push({level:'warn', text:hol.label + ' is a public holiday. A 15 percent surcharge applies and pricing may differ on the website, check before quoting.'});
+    if (hol && hol.type === 'holiday') out.flags.push({level:'warn', text:hol.label + ' is a public holiday. A 15% surcharge applies and pricing may differ on the website, check before quoting.'});
     if (hol && hol.type === 'busy') out.flags.push({level:'warn', text:'Falls in ' + hol.label + '. Special event pricing may apply, check the website before quoting.'});
-    if (venue.id === 'taxoffice' && lead.date.getDay() === 0 && session.open) out.flags.push({level:'info', text:'Sunday at the Tax Office carries a 10 percent surcharge.'});
+    if (venue.id === 'taxoffice' && lead.date.getDay() === 0 && session.open) out.flags.push({level:'info', text:'Sunday at the Tax Office carries a 10% surcharge.'});
   }
   const biggest = Math.max(...venue.booths.filter(b => !b.enquiry && b.type !== 'daybed').map(b => b.cap));
   if (lead.isFunction || (guests > biggest && (venue.id === 'cali' ? guests > 50 : guests >= 30))){
@@ -1244,7 +1244,7 @@ function renderBlocks(blocks){
 
 /* ---------- shared sentences ---------- */
 function itemsLine(pkg){ return joinList(pkg.items.map(i => /^\d/.test(i) ? i : lower(i))); }
-function packageRows(pm){ return [['Package', fmtMoney(pm.price)], ['5 percent gratuity for your waitress', fmtMoney(pm.grat)], ['Total', fmtMoney(pm.total), true]]; }
+function packageRows(pm){ return [['Package', fmtMoney(pm.price)], ['5% gratuity for your waitress', fmtMoney(pm.grat)], ['Total', fmtMoney(pm.total), true]]; }
 function packageNote(pm, dn){
   if (pm.mode === 'inside') return 'This sits inside your minimum spend, with ' + fmtMoney(pm.leftover) + ' left over for extra bottles on the ' + dn + '.';
   if (pm.mode === 'exact') return 'This uses your minimum spend exactly.';
@@ -1252,10 +1252,10 @@ function packageNote(pm, dn){
 }
 function boothRows(an){
   const m = an.money;
-  return [['Minimum spend on ' + dayPhrase(an.priced), fmtMoney(m.min)], ['5 percent gratuity for your waitress', fmtMoney(m.grat)], ['Total', fmtMoney(m.total), true]];
+  return [['Minimum spend on ' + dayPhrase(an.priced), fmtMoney(m.min)], ['5% gratuity for your waitress', fmtMoney(m.grat)], ['Total', fmtMoney(m.total), true]];
 }
 function minSpendExplainer(v, dn){
-  return 'The minimum spend works like a bar tab. The whole amount is a credit for your ' + drinksWord(v) + ' on the ' + dn + ', so it is not a fee on top of what you ' + (v.id === 'cali' ? 'order' : 'drink') + '. The 5 percent gratuity is the only extra, and it goes straight to your waitress who looks after you for the whole ' + dn + '.';
+  return 'The minimum spend works like a bar tab. The whole amount is a credit for your ' + drinksWord(v) + ' on the ' + dn + ', so it is not a fee on top of what you ' + (v.id === 'cali' ? 'order' : 'drink') + '. The 5% gratuity is the only extra, and it goes straight to your waitress who looks after you for the whole ' + dn + '.';
 }
 function timingLine(v, s, lateArrival){
   if (v.id === 'cali'){
@@ -1405,11 +1405,11 @@ function writeIntroEmail(lead, an, settings, today){
     B.push({t:'h', text:'Locking it in'});
     const above = [an.simple, an.stepUp].filter(x => x && x.mode === 'above');
     let lock = above.length
-      ? 'A 20 percent deposit locks the booth in, that is ' + fmtMoney(an.money.deposit) + ' on the minimum spend' + above.map((x, i) => (i === above.length - 1 ? ' or ' : ', ') + fmtMoney(x.deposit) + ' with Package ' + x.pkg.n).join('') + ', and the balance is paid in venue on the ' + dn + '.'
-      : 'A 20 percent deposit of ' + fmtMoney(an.money.deposit) + ' locks the booth in and the balance of ' + fmtMoney(an.money.balance) + ' is paid in venue on the ' + dn + '.';
+      ? 'A 20% deposit locks the booth in, that is ' + fmtMoney(an.money.deposit) + ' on the minimum spend' + above.map((x, i) => (i === above.length - 1 ? ' or ' : ', ') + fmtMoney(x.deposit) + ' with Package ' + x.pkg.n).join('') + ', and the balance is paid in venue on the ' + dn + '.'
+      : 'A 20% deposit of ' + fmtMoney(an.money.deposit) + ' locks the booth in and the balance of ' + fmtMoney(an.money.balance) + ' is paid in venue on the ' + dn + '.';
     const hol = holidayInfo(lead.date);
-    if (hol && hol.type === 'holiday') lock += ' That date is a public holiday, so a 15 percent surcharge applies on the ' + dn + '.';
-    if (v.id === 'taxoffice' && lead.date && lead.date.getDay() === 0) lock += ' Sundays carry a 10 percent surcharge.';
+    if (hol && hol.type === 'holiday') lock += ' That date is a public holiday, so a 15% surcharge applies on the ' + dn + '.';
+    if (v.id === 'taxoffice' && lead.date && lead.date.getDay() === 0) lock += ' Sundays carry a 10% surcharge.';
     B.push({t:'p', text:lock});
     B.push({t:'p', text:BLURB});
   } else {
@@ -1461,7 +1461,7 @@ function writeIntroSMS(lead, an, settings, today){
     L.push(cap(an.booth.name) + ' would suit your group, it is a ' + fmtMoney(m.min) + ' minimum spend' + dayBit + ' that all goes on your ' + drinksWord(v) + ', plus ' + fmtMoney(m.grat) + ' gratuity for your waitress, ' + fmtMoney(m.total) + ' all up');
     if (an.extraGuests) L.push('It holds up to ' + an.cap + ', so for ' + lead.guests + ' you would add ' + an.extraGuests + ' ' + entryWord(v, an.extraGuests) + ' for the extras');
     if (an.priced && an.priced.assumed) L.push('That is ' + an.priced.dayWord + ' pricing, let me know your date and numbers and I will confirm it');
-    L.push('A 20 percent deposit locks it in and the rest is paid in venue on the ' + dayNight(v, an.priced));
+    L.push('A 20% deposit locks it in and the rest is paid in venue on the ' + dayNight(v, an.priced));
     L.push('I have emailed you the details and the brochure, any questions give me a call' + ((settings && settings.mobile) ? ' on ' + settings.mobile : ''));
   } else {
     L.push('Let me know the date and how many are coming and I will send the options straight back');
@@ -1510,7 +1510,7 @@ function writeCallScript(lead, an, settings, today){
   if (asked.length) P.push('You were after ' + joinList(asked) + ', so I will run you through it.');
   if (an.booth){
     const m = an.money;
-    P.push((lead.guests ? 'For ' + lead.guests + ' guests I would put you in ' : 'I would put you in ') + an.booth.name + '. It is ' + an.booth.blurb + ', and it holds up to ' + an.cap + '. On ' + dayPhrase(an.priced) + ' it is a ' + fmtMoney(m.min) + ' minimum spend, plus 5 percent gratuity for your waitress which is ' + fmtMoney(m.grat) + ', so ' + fmtMoney(m.total) + ' in total. The minimum spend works like a bar tab, it all goes on your ' + drinksWord(v) + ' on the ' + dn + ', so there is nothing extra on top.');
+    P.push((lead.guests ? 'For ' + lead.guests + ' guests I would put you in ' : 'I would put you in ') + an.booth.name + '. It is ' + an.booth.blurb + ', and it holds up to ' + an.cap + '. On ' + dayPhrase(an.priced) + ' it is a ' + fmtMoney(m.min) + ' minimum spend, plus 5% gratuity for your waitress which is ' + fmtMoney(m.grat) + ', so ' + fmtMoney(m.total) + ' in total. The minimum spend works like a bar tab, it all goes on your ' + drinksWord(v) + ' on the ' + dn + ', so there is nothing extra on top.');
     if (an.extraGuests) P.push('It holds up to ' + an.cap + ', so for ' + lead.guests + ' you would add ' + an.extraGuests + ' ' + entryWord(v, an.extraGuests) + ' for the extras.');
     if (an.simple){
       let pk = 'If you want a package, Package ' + an.simple.pkg.n + ' at ' + fmtMoney(an.simple.price) + ' gets you ' + itemsLine(an.simple.pkg);
@@ -1523,7 +1523,7 @@ function writeCallScript(lead, an, settings, today){
     if (v.id === 'cali') P.push('Every package comes with a complimentary food package of ' + CALI_FOOD + ', and the booth includes express entry, your own waitress and towels for everyone.');
     P.push('I can also put a special mention in with your host for a ' + (occ ? occ.sign : 'sign') + ' on the booth and sparklers with your first bottle, to make it a proper Instagram moment.');
     if (an.lateArrival) P.push(timingLine(v, s, an.lateArrival));
-    P.push('To lock it in it is a 20 percent deposit, which is ' + fmtMoney(m.deposit) + ', and the rest is paid in venue on the ' + dn + '.');
+    P.push('To lock it in it is a 20% deposit, which is ' + fmtMoney(m.deposit) + ', and the rest is paid in venue on the ' + dn + '.');
     P.push('Would you like me to email the details through?');
   } else {
     P.push('To get the right booth and pricing for you, ' + lower(askLine(lead) || 'let me know a few more details.'));
@@ -1562,7 +1562,7 @@ function writeCRM(lead, an){
   else if (an.pastDate) parts.push('Date on the enquiry has passed, sent SMS and email asking for the right date.');
   else if (an.closed) parts.push('Date falls on a ' + an.session.label + ' which the venue does not run, sent SMS and email asking for ' + (v.id === 'cali' ? 'a Friday, Saturday or Sunday' : 'a Friday or Saturday') + '.');
   else if (an.booth){
-    let s = 'Sent intro SMS and email recommending ' + an.booth.name + ' at the ' + an.priced.dayWord + ' ' + fmtMoney(an.money.min) + ' minimum spend plus 5 percent gratuity for the waitress' + (an.priced.assumed ? ' as a guide' : '');
+    let s = 'Sent intro SMS and email recommending ' + an.booth.name + ' at the ' + an.priced.dayWord + ' ' + fmtMoney(an.money.min) + ' minimum spend plus 5% gratuity for the waitress' + (an.priced.assumed ? ' as a guide' : '');
     if (an.simple) s += ', with Package ' + an.simple.pkg.n + ' at ' + fmtMoney(an.simple.price) + (an.stepUp ? ' and Package ' + an.stepUp.pkg.n + ' at ' + fmtMoney(an.stepUp.price) : '') + ' as options';
     const missing = lead.prefs.brands.filter(b => !b.stocked);
     if (missing.length) s += ', advised ' + joinList(missing.map(b => b.name)) + ' is not stocked and pointed them to ' + joinList([...new Set(missing.map(b => CATEGORY_ALTERNATIVES[b.cat] || v.houseVodka))]);
@@ -1571,7 +1571,7 @@ function writeCRM(lead, an){
     if (an.priced && an.priced.assumed) s += ', asked for the date to confirm';
     parts.push(s + '.');
   } else parts.push('Sent intro SMS and email asking for the missing details before quoting.');
-  parts.push('Nothing confirmed until the 20 percent deposit is received.');
+  parts.push('Nothing confirmed until the 20% deposit is received.');
   return parts.join(' ');
 }
 function writeHandoff(lead, an){
@@ -1681,12 +1681,12 @@ function writeReply(ctx, text, scenarioId, settings, today){
         } else B.push({t:'rows', rows:boothRows(an)});
         const tot = sel && sel.mode === 'above' ? sel.total : m.total;
         const dep = Math.round(tot * 0.2);
-        B.push({t:'p', text:'To get it booked I just need the full name for the booking, the best mobile and email' + (sel && sel.pkg ? '' : ', and which package you are going with') + '. I will then send the payment link for the 20 percent deposit of ' + fmtMoney(dep) + ', and the balance of ' + fmtMoney(tot - dep) + ' is paid in venue on the ' + dn + '.' + (v.id !== 'taxoffice' ? ' Online card payments carry a 2.1 percent surcharge.' : '')});
+        B.push({t:'p', text:'To get it booked I just need the full name for the booking, the best mobile and email' + (sel && sel.pkg ? '' : ', and which package you are going with') + '. I will then send the payment link for the 20% deposit of ' + fmtMoney(dep) + ', and the balance of ' + fmtMoney(tot - dep) + ' is paid in venue on the ' + dn + '.' + (v.id !== 'taxoffice' ? ' Online card payments carry a 2.1% surcharge.' : '')});
         if (sel && sel.pkg && /mixers/i.test(sel.pkg.items.join(' '))) B.push({t:'p', text:'Your package comes with three mixers, so let me know which three you would like from ' + joinList(MIXERS) + '. If you would like a sign on the booth, send me two or three words for it too.'});
-        sms.push('Hi ' + first + ', great news. Send me the full name for the booking plus your best mobile and email and I will send the payment link', 'The 20 percent deposit is ' + fmtMoney(dep) + ' and the rest is paid in venue on the ' + dn);
+        sms.push('Hi ' + first + ', great news. Send me the full name for the booking plus your best mobile and email and I will send the payment link', 'The 20% deposit is ' + fmtMoney(dep) + ' and the rest is paid in venue on the ' + dn);
       } else {
-        B.push({t:'p', text:'To get it booked I just need the full name for the booking, the best mobile and email, and which package you are going with. I will then send the payment link for the 20 percent deposit, and the balance is paid in venue on the ' + dn + '.'});
-        sms.push('Hi ' + first + ', great news. Send me the full name for the booking plus your best mobile and email and I will send the payment link', 'A 20 percent deposit locks it in and the rest is paid in venue on the ' + dn);
+        B.push({t:'p', text:'To get it booked I just need the full name for the booking, the best mobile and email, and which package you are going with. I will then send the payment link for the 20% deposit, and the balance is paid in venue on the ' + dn + '.'});
+        sms.push('Hi ' + first + ', great news. Send me the full name for the booking plus your best mobile and email and I will send the payment link', 'A 20% deposit locks it in and the rest is paid in venue on the ' + dn);
       }
       B.push({t:'p', text:'Once the deposit is through you will get a confirmation and the booth is yours.'});
       break;
@@ -1705,8 +1705,8 @@ function writeReply(ctx, text, scenarioId, settings, today){
         let pk = 'Packages are fixed as listed. The full bottle list and all the packages are in the brochure attached.';
         const mb = missingBrandLine(v, lead); pk += ' ' + (mb || houseLine(v, lead));
         B.push({t:'p', text:pk});
-        B.push({t:'p', text:'A 20 percent deposit of ' + fmtMoney(m.deposit) + ' locks the booth in and the balance is paid in venue on the ' + dn + '.'});
-        sms.push('Hi ' + first + ', ' + boothLine(), (an.simple ? 'Package ' + an.simple.pkg.n + ' at ' + fmtMoney(an.simple.price) + (an.simple.mode === 'above' ? '' : ' sits inside the minimum spend') + (an.stepUp ? ', or Package ' + an.stepUp.pkg.n + ' at ' + fmtMoney(an.stepUp.price) + ' if you want to step it up' : '') : ''), 'A 20 percent deposit locks it in, I can email the full breakdown if that helps');
+        B.push({t:'p', text:'A 20% deposit of ' + fmtMoney(m.deposit) + ' locks the booth in and the balance is paid in venue on the ' + dn + '.'});
+        sms.push('Hi ' + first + ', ' + boothLine(), (an.simple ? 'Package ' + an.simple.pkg.n + ' at ' + fmtMoney(an.simple.price) + (an.simple.mode === 'above' ? '' : ' sits inside the minimum spend') + (an.stepUp ? ', or Package ' + an.stepUp.pkg.n + ' at ' + fmtMoney(an.stepUp.price) + ' if you want to step it up' : '') : ''), 'A 20% deposit locks it in, I can email the full breakdown if that helps');
       } else if (v && an.closed){
         B.push({t:'p', text:cap(v.prose) + ' ' + v.closedNote + '. Let me know a ' + (v.id === 'cali' ? 'Friday, Saturday or Sunday' : 'Friday or Saturday') + ' that works and I will send the booth options and pricing straight back.'});
         sms.push('Hi ' + first + ', ' + v.prose + ' ' + v.closedNote + ', which ' + (v.id === 'cali' ? 'Friday, Saturday or Sunday' : 'weekend night') + ' works and I will send the pricing straight back');
@@ -1843,9 +1843,9 @@ function writeReply(ctx, text, scenarioId, settings, today){
       break;
     }
     case 'payment': {
-      B.push({t:'p', text:'The 20 percent deposit is paid online with the link I send you, and the balance is paid in venue on arrival' + (v && v.id === 'cali' ? ', by card or cash with your host before you go in' : '') + '. The cardholder needs to be there with the card used for the deposit and matching photo ID.'});
+      B.push({t:'p', text:'The 20% deposit is paid online with the link I send you, and the balance is paid in venue on arrival' + (v && v.id === 'cali' ? ', by card or cash with your host before you go in' : '') + '. The cardholder needs to be there with the card used for the deposit and matching photo ID.'});
       if (v && an.booth && open) B.push({t:'rows', rows:[['Total', fmtMoney(m.total)], ['Deposit to lock it in', fmtMoney(m.deposit)], ['Balance paid in venue', fmtMoney(m.balance)]]});
-      sms.push('Hi ' + first + ', the 20 percent deposit is paid online with the link and the rest is paid in venue on arrival. The cardholder needs to be there with the card and matching ID');
+      sms.push('Hi ' + first + ', the 20% deposit is paid online with the link and the rest is paid in venue on arrival. The cardholder needs to be there with the card and matching ID');
       break;
     }
     case 'thanks': {
@@ -1856,8 +1856,8 @@ function writeReply(ctx, text, scenarioId, settings, today){
     default: {
       B.push({t:'p', text:'Thanks for getting back to me.'});
       if (v && an.booth && open){ B.push({t:'p', text:boothLine()}); B.push({t:'rows', rows:boothRows(an)}); if (an.simple) B.push({t:'p', text:'Package ' + an.simple.pkg.n + ' at ' + fmtMoney(an.simple.price) + ' gets you ' + itemsLine(an.simple.pkg) + (an.simple.mode === 'inside' ? ', and sits inside your minimum spend.' : '.')}); }
-      B.push({t:'p', text:ask || 'Let me know if you would like me to lock it in, a 20 percent deposit holds the booth.'});
-      sms.push('Hi ' + first + ', thanks for getting back to me. ' + (ask ? ask.replace(/\.$/, '') : 'Let me know if you want me to lock it in, a 20 percent deposit holds the booth'));
+      B.push({t:'p', text:ask || 'Let me know if you would like me to lock it in, a 20% deposit holds the booth.'});
+      sms.push('Hi ' + first + ', thanks for getting back to me. ' + (ask ? ask.replace(/\.$/, '') : 'Let me know if you want me to lock it in, a 20% deposit holds the booth'));
     }
   }
   const detected = detectScenarios(text).map(x => x.id);
@@ -1872,8 +1872,8 @@ function writeReplyCRM(scenarioId, lead, an, v, chosen){
   let s = map[scenarioId] || map.generic;
   const sel = chosen || an.simple;
   const withPkg = ['price','generic','birthday','book'].includes(scenarioId);
-  if (an && an.booth && an.session && an.session.open && !an.pastDate && ['price','generic','birthday','book','avail','walkin'].includes(scenarioId)) s += (scenarioId === 'book' && chosen ? ' Going with ' : ' Quoted ') + an.booth.name + ' at ' + fmtMoney(an.money.min) + ' plus 5 percent gratuity for the waitress' + (sel && withPkg ? ' with Package ' + sel.pkg.n + ' at ' + fmtMoney(sel.price) : '') + (scenarioId === 'book' && sel && sel.mode === 'above' ? ', total ' + fmtMoney(sel.total) + ' with deposit of ' + fmtMoney(sel.deposit) : scenarioId === 'book' ? ', total ' + fmtMoney(an.money.total) + ' with deposit of ' + fmtMoney(an.money.deposit) : '') + '.';
-  return s + ' Nothing confirmed until the 20 percent deposit is received.';
+  if (an && an.booth && an.session && an.session.open && !an.pastDate && ['price','generic','birthday','book','avail','walkin'].includes(scenarioId)) s += (scenarioId === 'book' && chosen ? ' Going with ' : ' Quoted ') + an.booth.name + ' at ' + fmtMoney(an.money.min) + ' plus 5% gratuity for the waitress' + (sel && withPkg ? ' with Package ' + sel.pkg.n + ' at ' + fmtMoney(sel.price) : '') + (scenarioId === 'book' && sel && sel.mode === 'above' ? ', total ' + fmtMoney(sel.total) + ' with deposit of ' + fmtMoney(sel.deposit) : scenarioId === 'book' ? ', total ' + fmtMoney(an.money.total) + ' with deposit of ' + fmtMoney(an.money.deposit) : '') + '.';
+  return s + ' Nothing confirmed until the 20% deposit is received.';
 }
 
 /* ---------- quote and SevenRooms note ---------- */
@@ -1913,14 +1913,14 @@ function writeQuoteEmail(q, r, ctx, settings){
   else if (r.pkg && r.pkg.price > r.min) rows.push(['Package ' + r.pkg.n + ', covers the ' + fmtMoney(r.min) + ' minimum spend', fmtMoney(r.spend)]);
   else if (r.pkg) rows.push(['Minimum spend, Package ' + r.pkg.n + ' sits inside it', fmtMoney(r.spend)]);
   else rows.push([r.spend > r.min ? 'Bottle service tab' : 'Minimum spend', fmtMoney(r.spend)]);
-  if (!r.daybed) rows.push(['5 percent gratuity for your waitress', fmtMoney(r.gratuity)]);
-  if (r.holiday) rows.push(['Public holiday surcharge, 15 percent', fmtMoney(r.holiday)]);
-  if (r.sunday) rows.push(['Sunday surcharge, 10 percent', fmtMoney(r.sunday)]);
+  if (!r.daybed) rows.push(['5% gratuity for your waitress', fmtMoney(r.gratuity)]);
+  if (r.holiday) rows.push(['Public holiday surcharge, 15%', fmtMoney(r.holiday)]);
+  if (r.sunday) rows.push(['Sunday surcharge, 10%', fmtMoney(r.sunday)]);
   rows.push(['Total', fmtMoney(r.total), true]);
   B.push({t:'rows', rows});
   if (r.pkg && r.pkg.price < r.min) B.push({t:'p', text:'Package ' + r.pkg.n + ' is ' + fmtMoney(r.pkg.price) + ', so there is ' + fmtMoney(r.min - r.pkg.price) + ' of your minimum spend left over for extra bottles on the ' + dn + '.'});
-  const rows2 = [['Deposit to lock it in, 20 percent', fmtMoney(r.deposit)]];
-  if (r.online) rows2.push(['Online card surcharge on the deposit, 2.1 percent', fmtMoney(r.online)]);
+  const rows2 = [['Deposit to lock it in, 20%', fmtMoney(r.deposit)]];
+  if (r.online) rows2.push(['Online card surcharge on the deposit, 2.1%', fmtMoney(r.online)]);
   rows2.push(['Balance paid in venue on the ' + dn, fmtMoney(r.balance), true]);
   B.push({t:'rows', rows:rows2});
   B.push({t:'h', text:'A few things to know'});
@@ -1942,13 +1942,13 @@ function writeSevenRooms(q, r, ctx){
   L.push(r.daybed ? 'Daybed package' : r.pkg ? 'Package ' + r.pkg.n : 'Bottle service tab ' + fmtMoney(r.spend));
   L.push('Mixes ' + (q.mixes || 'to confirm'));
   L.push('Signage ' + (q.signage || 'none'));
-  L.push(r.daybed ? 'Package fee ' + fmtMoney(r.min) : 'Min spend ' + fmtMoney(r.min) + ' plus 5 percent gratuity' + (r.spend > r.min ? ', package ' + fmtMoney(r.spend) : '') + (r.holiday ? ' plus 15 percent public holiday surcharge' : '') + (r.sunday ? ' plus 10 percent Sunday surcharge' : ''));
+  L.push(r.daybed ? 'Package fee ' + fmtMoney(r.min) : 'Min spend ' + fmtMoney(r.min) + ' plus 5% gratuity' + (r.spend > r.min ? ', package ' + fmtMoney(r.spend) : '') + (r.holiday ? ' plus 15% public holiday surcharge' : '') + (r.sunday ? ' plus 10% Sunday surcharge' : ''));
   L.push('Total ' + fmtMoney(r.total));
   L.push((ctx.guests ? ctx.guests + ' guests' : 'Guests') + ' arriving ' + (q.arrival || (r.venue.id === 'cali' ? 'by ' + (r.session && r.session.checkIn ? r.session.checkIn : 'check in') : r.venue.id === 'taxoffice' ? 'at the confirmation time' : 'by 11pm')));
   return L.join('\n');
 }
 function writeQuoteCRM(q, r, ctx){
-  return 'Sent booking summary for ' + r.booth.name + ' on ' + (r.session && r.session.dayWord ? dayPhrase(r.session) : 'the booked night') + (r.daybed ? ' as a flat package fee of ' + fmtMoney(r.min) : r.pkg ? ' with Package ' + r.pkg.n + ' at ' + fmtMoney(r.pkg.price) : ' with a ' + fmtMoney(r.spend) + ' bottle service tab') + ', total ' + fmtMoney(r.total) + (r.daybed ? '' : ' including the 5 percent gratuity for the waitress') + '. Deposit of ' + fmtMoney(r.deposit) + ' requested with the balance of ' + fmtMoney(r.balance) + ' paid in venue' + (q.mixes ? ', mixers ' + q.mixes : '') + (q.signage ? ', sign ' + q.signage : '') + '. Nothing confirmed until the 20 percent deposit is received.';
+  return 'Sent booking summary for ' + r.booth.name + ' on ' + (r.session && r.session.dayWord ? dayPhrase(r.session) : 'the booked night') + (r.daybed ? ' as a flat package fee of ' + fmtMoney(r.min) : r.pkg ? ' with Package ' + r.pkg.n + ' at ' + fmtMoney(r.pkg.price) : ' with a ' + fmtMoney(r.spend) + ' bottle service tab') + ', total ' + fmtMoney(r.total) + (r.daybed ? '' : ' including the 5% gratuity for the waitress') + '. Deposit of ' + fmtMoney(r.deposit) + ' requested with the balance of ' + fmtMoney(r.balance) + ' paid in venue' + (q.mixes ? ', mixers ' + q.mixes : '') + (q.signage ? ', sign ' + q.signage : '') + '. Nothing confirmed until the 20% deposit is received.';
 }
 
 
@@ -2108,7 +2108,7 @@ function writeQuoteCRM(q, r, ctx){
       out += '<div class="card">';
       out += '<div class="rec-head"><div><h2>' + h(cap(an.booth.name)) + '</h2><p class="muted">' + h(cap(an.booth.blurb)) + '.</p></div><span class="chip">Holds ' + an.cap + (lead.guests ? ', you have ' + lead.guests : '') + '</span></div>';
       if (an.extraGuests) out += '<div class="flag warn mt">' + warnIcon + '<span>Over capacity by ' + an.extraGuests + '. The messages offer ' + h(entryWord(v, an.extraGuests)) + ' for the extras.</span></div>';
-      out += rowsHTML([['Minimum spend on ' + dayPhrase(ps) + (ps.assumed ? ', assumed' : ''), fmtMoney(m.min)], ['5 percent gratuity for the waitress', fmtMoney(m.grat)], ['Total', fmtMoney(m.total), 'total'], ['Deposit to lock it in, 20 percent', fmtMoney(m.deposit), 'sub'], ['Balance paid in venue', fmtMoney(m.balance), 'sub']]);
+      out += rowsHTML([['Minimum spend on ' + dayPhrase(ps) + (ps.assumed ? ', assumed' : ''), fmtMoney(m.min)], ['5% gratuity for the waitress', fmtMoney(m.grat)], ['Total', fmtMoney(m.total), 'total'], ['Deposit to lock it in, 20%', fmtMoney(m.deposit), 'sub'], ['Balance paid in venue', fmtMoney(m.balance), 'sub']]);
       out += '<p class="explain">Minimum spend is a credit on ' + h(drinksWord(v)) + ', the gratuity is the only extra and goes to the waitress.</p>';
       if (an.budgetNote) out += '<div class="flag info mt">' + infoIcon + '<span>' + h(an.budgetNote) + '</span></div>';
       if (an.simple){
@@ -2135,7 +2135,7 @@ function writeQuoteCRM(q, r, ctx){
   function pkgHTML(label, pm, v, s){
     let x = '<div class="pkg"><div class="k">' + h(label) + '</div><div class="name">Package ' + pm.pkg.n + ' at ' + h(fmtMoney(pm.price)) + '</div>';
     x += '<div class="items">' + h(pm.pkg.items.join(', ')) + '</div>';
-    if (pm.mode === 'above') x += rowsHTML([['Package', fmtMoney(pm.price)], ['5 percent gratuity', fmtMoney(pm.grat)], ['Total', fmtMoney(pm.total), 'total'], ['Deposit 20 percent', fmtMoney(pm.deposit), 'sub']]);
+    if (pm.mode === 'above') x += rowsHTML([['Package', fmtMoney(pm.price)], ['5% gratuity', fmtMoney(pm.grat)], ['Total', fmtMoney(pm.total), 'total'], ['Deposit 20%', fmtMoney(pm.deposit), 'sub']]);
     else if (pm.mode === 'inside') x += '<div class="note">Sits inside the minimum spend, ' + h(fmtMoney(pm.leftover)) + ' left over for more bottles.</div>';
     else x += '<div class="note">Uses the minimum spend exactly.</div>';
     if (pm.alts && pm.alts.length) x += '<div class="alt">Same price: ' + h(pm.alts.map(a => 'Package ' + a.n + ', ' + a.items.slice(0,3).join(', ')).join(' or ')) + '</div>';
@@ -2246,12 +2246,12 @@ function writeQuoteCRM(q, r, ctx){
     else if (r.pkg && r.pkg.price > r.min) rows.push(['Package ' + r.pkg.n + ', covers the ' + fmtMoney(r.min) + ' minimum spend', fmtMoney(r.spend)]);
     else if (r.pkg) rows.push(['Minimum spend, Package ' + r.pkg.n + ' at ' + fmtMoney(r.pkg.price) + ' sits inside it', fmtMoney(r.spend)]);
     else rows.push([r.spend > r.min ? 'Bottle service tab' : 'Minimum spend', fmtMoney(r.spend)]);
-    if (!r.daybed) rows.push(['5 percent gratuity for the waitress', fmtMoney(r.gratuity)]);
-    if (r.holiday) rows.push(['Public holiday 15 percent', fmtMoney(r.holiday)]);
-    if (r.sunday) rows.push(['Sunday 10 percent', fmtMoney(r.sunday)]);
+    if (!r.daybed) rows.push(['5% gratuity for the waitress', fmtMoney(r.gratuity)]);
+    if (r.holiday) rows.push(['Public holiday 15%', fmtMoney(r.holiday)]);
+    if (r.sunday) rows.push(['Sunday 10%', fmtMoney(r.sunday)]);
     rows.push(['Total', fmtMoney(r.total), 'total']);
-    rows.push(['Deposit to lock it in, 20 percent', fmtMoney(r.deposit), 'sub']);
-    if (r.online) rows.push(['Card surcharge on the deposit, 2.1 percent', fmtMoney(r.online), 'sub']);
+    rows.push(['Deposit to lock it in, 20%', fmtMoney(r.deposit), 'sub']);
+    if (r.online) rows.push(['Card surcharge on the deposit, 2.1%', fmtMoney(r.online), 'sub']);
     rows.push(['Balance paid in venue', fmtMoney(r.balance), 'sub']);
     let out = '<div class="card"><div class="rec-head"><div><h2>' + h(cap(r.booth.name)) + '</h2><p class="muted">' + h(d ? fmtDate(d) + (v.id === 'cali' ? ', ' + s.dayWord : '') : cap(dayPhrase(s)).replace(/^A /, '')) + '</p></div><span class="chip">Holds ' + boothCap(v, r.booth, s) + '</span></div>' + rowsHTML(rows);
     if (r.pkg) out += '<p class="explain">' + h(r.pkg.items.join(', ')) + '</p>';
@@ -2287,7 +2287,7 @@ function writeQuoteCRM(q, r, ctx){
     const v = VENUES[k];
     let out = '<div class="card"><h2>' + h(v.fullName) + '</h2><p class="muted">' + h(v.vibe) + '</p>';
     out += '<div class="facts mt"><div class="fact"><b class="sm">' + h(v.address) + '</b><span>Address</span></div><div class="fact"><b class="sm">' + h(v.phone) + '</b><span>Phone</span></div><div class="fact"><b class="sm">' + h(v.hours) + '</b><span>Hours</span></div><div class="fact"><b class="sm">' + h(v.web) + '</b><span>Website</span></div></div></div>';
-    out += '<div class="card"><h2>Booths and minimum spends</h2><p class="muted">Minimum spend is a credit on ' + h(drinksWord(v)) + ', plus 5 percent gratuity for the waitress. Always follow the website for special events.</p>' + priceTable(v) + '</div>';
+    out += '<div class="card"><h2>Booths and minimum spends</h2><p class="muted">Minimum spend is a credit on ' + h(drinksWord(v)) + ', plus 5% gratuity for the waitress. Always follow the website for special events.</p>' + priceTable(v) + '</div>';
     out += '<div class="card"><h2>Packages</h2>' + v.packages.map(p => '<div class="pkgrow"><b>Package ' + p.n + '<br>' + h(fmtMoney(p.price)) + '</b><span>' + h(p.items.join(', ')) + '</span></div>').join('');
     if (v.spray) out += '<div class="pkgrow"><b>Spray packages</b><span>' + h(v.spray.map(sp => sp.qty + ' x Veuve Clicquot 750ml ' + fmtMoney(sp.price) + ', saves ' + fmtMoney(sp.save)).join('. ')) + '. Waitresses bring the bottles out in ponchos with spray guns.</span></div>';
     out += '</div>';
