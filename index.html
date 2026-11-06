@@ -217,6 +217,7 @@ details.cat[open] summary::after{content:"\2212"}
       <button data-tab="reply" role="tab">Reply</button>
       <button data-tab="quote" role="tab">Quote</button>
       <button data-tab="venues" role="tab">Venues</button>
+      <button data-tab="templates" role="tab">Templates</button>
     </nav>
     <button class="gear" id="settingsBtn" title="Your details" aria-label="Your details">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3h0a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8v0a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
@@ -310,6 +311,18 @@ details.cat[open] summary::after{content:"\2212"}
         <div class="card"><div class="empty">Pick the booth and package and press Build quote.</div></div>
       </div>
     </div>
+  </section>
+
+  <section class="tab" id="tab-templates">
+    <div class="intro"><h1>Templates</h1><p>The enquiry post, the SevenRooms lock in note and the two weeks out email. They fill from the last lead or quote you ran, or type the name and pick the venue.</p></div>
+    <div class="card">
+      <div class="fields two">
+        <div><label class="f">First name</label><input type="text" id="tName" placeholder="Saxon"></div>
+        <div><label class="f">Venue</label><select id="tVenue"><option value="">Pick a venue</option><option value="tempo">Tempo</option><option value="bedroom">Bedroom</option><option value="havana">Havana</option><option value="taxoffice">Tax Office</option><option value="cali">Cali Beach</option></select></div>
+      </div>
+      <div class="row mt"><button class="btn" id="fillTemplates">Update</button><span class="small">Fills from the last lead or quote when there is one.</span></div>
+    </div>
+    <div id="templatesOut"></div>
   </section>
 
   <section class="tab" id="tab-venues">
@@ -750,6 +763,23 @@ const VENUES = {
 };
 
 const VENUE_ORDER = ['tempo','bedroom','havana','taxoffice','cali'];
+const BOTTLE_LINKS = {
+  tempo:'https://artesiancorp.com/tempo-bottle-service-packages/',
+  bedroom:'https://artesiancorp.com/bedroom-bottle-service-packages',
+  havana:'https://artesiancorp.com/havana-bottle-service-packages',
+  taxoffice:'https://artesiancorp.com/tax-office-bottle-service-packages/',
+  cali:'https://artesiancorp.com/cali-beach-bottle-service/'
+};
+
+/* New Year's Eve 2026, from the NYE pricing sheet. Booth ids match the venue booth lists, cap is the NYE capacity, price is the NYE minimum spend or daybed fee */
+const NYE = {
+  year:2026,
+  cali:{live:true, booths:{deckbed:{price:600, cap:5}, poolbed:{price:800, cap:6}, privpool:{price:4500, cap:15}, lagoon:{price:4500, cap:12}, lookout:{price:4500, cap:15}, barbooth:{price:4500, cap:15}, calibooth:{price:3500, cap:10}, premcali:{price:4500, cap:10}, deckbooth:{price:2500, cap:7}, cabana:{price:10000, cap:25}, grand:{price:20000, cap:50}}, tickets:[['Early Bird', 59], ['First Release', 75], ['Second Release', 109], ['Final Release', 179]]},
+  havana:{live:false, booths:{b1:{price:3150, cap:12}, b2:{price:2625, cap:10}, b3:{price:3150, cap:12}, b34:{price:5775, cap:20}, b4:{price:2625, cap:10}, b5:{price:2625, cap:10}, b6:{price:2100, cap:10}}, tickets:[['Arrive before 9.30pm', 39], ['Arrive before 10.30pm', 69], ['Arrive before 11.30pm', 109]]},
+  bedroom:{live:false, booths:{b1:{price:4750, cap:10}, b2:{price:3800, cap:10}, b3:{price:3800, cap:10}, b23:{price:7000, cap:20}, b4:{price:4750, cap:10}, b5:{price:4750, cap:10}, b6:{price:4000, cap:8}, b7:{price:4000, cap:12}}, tickets:[['Arrive before 9.30pm', 39], ['Arrive before 10.30pm', 69], ['Arrive before 11.30pm', 109]]},
+  tempo:{live:false, booths:{b1:{price:2000, cap:10}, b2:{price:2000, cap:10}, b3:{price:2000, cap:10}, b5:{price:2500, cap:10}}, tickets:[]},
+  taxoffice:{live:false, booths:{b1:{price:4000, cap:10}, b2:{price:3500, cap:10}, b3:{price:3500, cap:10}, b4:{price:4000, cap:10}, b5:{price:2500, cap:8}, b6:{price:2700, cap:6}, b7:{price:3000, cap:10}}, tickets:[['Early Bird GA', 29], ['Early Bird VIP Package', 59], ['Final Release GA', 49], ['Final Release VIP Package', 64]]}
+};
 
 /* Queensland public holidays and busy periods, used only to raise a flag */
 const PUBLIC_HOLIDAYS = {
@@ -850,7 +880,8 @@ function detectVenue(text){
 }
 function drinksWord(v){ return v.id === 'cali' ? 'food and drinks' : 'drinks'; }
 function dayNight(v, s){ if (v.id !== 'cali') return 'night'; return (s && (s.key === 'satday' || s.key === 'sun')) ? 'day' : 'night'; }
-function dayPhrase(s){ if (!s || !s.dayWord) return 'the night'; if (s.dayWord === 'weeknight') return 'a weeknight'; return 'a ' + s.dayWord; }
+function dayPhrase(s){ if (!s || !s.dayWord) return 'the night'; if (s.nye) return 'New Year\'s Eve'; if (s.dayWord === 'weeknight') return 'a weeknight'; return 'a ' + s.dayWord; }
+function nyeTicketsLine(v){ const n = NYE[v.id]; if (!n || !n.tickets.length) return ''; return 'NYE tickets on the sheet: ' + n.tickets.map(t => t[0] + ' ' + fmtMoney(t[1])).join(', ') + '.'; }
 function entryWord(v, n){ return (v.id === 'cali' ? 'express ' : 'priority ') + (n === 1 ? 'entry' : 'entries'); }
 
 /* ---------- dates and times ---------- */
@@ -1056,6 +1087,9 @@ function resolveSession(venue, date, opts){
   opts = opts || {};
   if (!date) return {open:true, key:null, label:'the night', unknown:true};
   const wd = date.getDay();
+  if (date.getMonth() === 11 && date.getDate() === 31 && NYE[venue.id]){
+    return {open:true, key:'nye', label:'New Year\'s Eve', dayWord:'New Year\'s Eve', nye:true, time:'night', checkIn: venue.id === 'cali' ? '7pm' : null, window: venue.id === 'cali' ? 'from 7pm for the night session' : null};
+  }
   if (venue.id === 'cali'){
     const month = date.getMonth() + 1;
     const season = (month >= 4 && month <= 8) ? 'winter' : 'summer';
@@ -1077,12 +1111,15 @@ function resolveSession(venue, date, opts){
   if (wd === 6) return {open:true, key:'sat', label:'Saturday', dayWord:'Saturday'};
   return {open:false, label:DAY_NAMES[wd]};
 }
+function nyeEntry(venue, booth, session){ return (session && session.key === 'nye' && NYE[venue.id]) ? (NYE[venue.id].booths[booth.id] || null) : null; }
 function priceOf(venue, booth, session){
   if (!session || !session.key) return null;
+  if (session.key === 'nye'){ const n = nyeEntry(venue, booth, session); return n ? n.price : null; }
   if (venue.seasonal){ const p = booth.prices[session.season]; return p ? (p[session.key] != null ? p[session.key] : null) : null; }
   return booth.prices[session.key] != null ? booth.prices[session.key] : null;
 }
 function boothCap(venue, booth, session){
+  const n = nyeEntry(venue, booth, session); if (n) return n.cap;
   if (venue.seasonal && session && session.season === 'winter' && booth.winterCap) return booth.winterCap;
   return booth.cap;
 }
@@ -1129,7 +1166,15 @@ function buildOptions(lead, opts){
     else if (days <= 2) out.flags.push({level:'warn', text:'Very short notice, ' + (days === 0 ? 'it is today' : days === 1 ? 'it is tomorrow' : 'it is two days away') + '. Get the deposit link out straight away.'});
     const hol = holidayInfo(lead.date);
     if (hol && hol.type === 'holiday') out.flags.push({level:'warn', text:hol.label + ' is a public holiday. A 15% surcharge applies and pricing may differ on the website, check before quoting.'});
-    if (hol && hol.type === 'busy') out.flags.push({level:'warn', text:'Falls in ' + hol.label + '. Special event pricing may apply, check the website before quoting.'});
+    if (session.nye){
+      const n = NYE[venue.id];
+      let t = 'New Year\'s Eve. Pricing and capacities below are from the NYE ' + NYE.year + ' sheet' + (lead.date.getFullYear() !== NYE.year ? ', which is for ' + NYE.year + ', so check for a newer sheet' : '') + '.';
+      t += n.live ? (venue.id === 'cali' ? ' Confirm with the office whether the booth price covers the day, the night or both.' : '') : ' The sheet marks the club NYE pricing as TBC and not live yet, so confirm before quoting.';
+      t += ' NYE bookings are non refundable unless the venue cancels.';
+      out.flags.push({level:'warn', text:t});
+      const tk = nyeTicketsLine(venue); if (tk) out.flags.push({level:'info', text:tk});
+    }
+    else if (hol && hol.type === 'busy') out.flags.push({level:'warn', text:'Falls in ' + hol.label + '. Special event pricing may apply, check the website before quoting.'});
     if (venue.id === 'taxoffice' && lead.date.getDay() === 0 && session.open) out.flags.push({level:'info', text:'Sunday at the Tax Office carries a 10% surcharge.'});
   }
   const biggest = Math.max(...venue.booths.filter(b => !b.enquiry && b.type !== 'daybed').map(b => b.cap));
@@ -1202,7 +1247,7 @@ function buildOptions(lead, opts){
     else if (out.stepUp && out.stepUp.price <= lead.budget) out.budgetNote = 'Step it up lands inside their ' + fmtMoney(lead.budget) + ' budget.';
   }
   if (venue.id === 'cali' && guests > 0 && guests <= 6){
-    out.daybeds = venue.booths.filter(b => b.type === 'daybed' && priceOf(venue, b, session) != null).map(b => ({booth:b, price:priceOf(venue, b, session), inc: b.inclusions[session.time === 'day' ? 'day' : 'night']}));
+    out.daybeds = venue.booths.filter(b => b.type === 'daybed' && priceOf(venue, b, session) != null).map(b => ({booth:b, price:priceOf(venue, b, session), inc: session.nye ? null : b.inclusions[session.time === 'day' ? 'day' : 'night']}));
   }
   return out;
 }
@@ -1225,6 +1270,7 @@ function renderBlocks(blocks){
     if (b.t === 'rows') return b.rows.map(r => r[0] + ': ' + r[1]).join('\n');
     if (b.t === 'kv') return b.k + ': ' + b.text;
     if (b.t === 'sig') return b.lines.join('\n');
+    if (b.t === 'link') return b.url;
     return b.text;
   }).join('\n'));
   const text = textChunks.join('\n\n');
@@ -1234,6 +1280,7 @@ function renderBlocks(blocks){
     if (b.t === 'h') return '<p style="margin:6px 0 4px;' + F + 'font-size:15px;line-height:1.5;color:#1d1d1f;font-weight:700">' + esc(b.text) + '</p>';
     if (b.t === 'b') return '<div style="' + F + 'font-size:15px;line-height:1.5;color:#1d1d1f;font-weight:600">' + esc(b.text) + '</div>';
     if (b.t === 'l') return '<div style="' + F + 'font-size:15px;line-height:1.5;color:#1d1d1f">' + esc(b.text) + '</div>';
+    if (b.t === 'link') return '<div style="' + F + 'font-size:15px;line-height:1.5"><a href="' + esc(b.url) + '" style="color:#0071e3">' + esc(b.url) + '</a></div>';
     if (b.t === 'kv') return '<div style="' + F + 'font-size:15px;line-height:1.5;color:#1d1d1f"><strong>' + esc(b.k) + ':</strong> ' + esc(b.text) + '</div>';
     if (b.t === 'rows') return '<table cellpadding="0" cellspacing="0" style="border-collapse:collapse;margin:6px 0 8px">' + b.rows.map((r, i) => '<tr><td style="' + F + 'font-size:15px;line-height:1.5;color:#1d1d1f;padding:3px 28px 3px 0;' + (r[2] ? 'font-weight:700;border-top:1px solid #d2d2d7;' : '') + '">' + esc(r[0]) + '</td><td style="' + F + 'font-size:15px;line-height:1.5;color:#1d1d1f;padding:3px 0;text-align:right;white-space:nowrap;' + (r[2] ? 'font-weight:700;border-top:1px solid #d2d2d7;' : '') + '">' + esc(r[1]) + '</td></tr>').join('') + '</table>';
     if (b.t === 'sig') return '<p style="margin:18px 0 0;' + F + 'font-size:15px;line-height:1.5;color:#1d1d1f">' + b.lines.map(esc).join('<br>') + '</p>';
@@ -1258,6 +1305,10 @@ function minSpendExplainer(v, dn){
   return 'The minimum spend works like a bar tab. The whole amount is a credit for your ' + drinksWord(v) + ' on the ' + dn + ', so it is not a fee on top of what you ' + (v.id === 'cali' ? 'order' : 'drink') + '. The 5% gratuity is the only extra, and it goes straight to your waitress who looks after you for the whole ' + dn + '.';
 }
 function timingLine(v, s, lateArrival){
+  if (s && s.nye){
+    if (v.id === 'cali') return 'New Year\'s Eve runs as a special event. The night session starts at 7pm, and day guests need to be out by 5pm, or 5.30pm for VIP, unless they have a night ticket.';
+    return 'New Year\'s Eve runs as a special event, so your check in time will be on your confirmation.' + (lateArrival ? ' You mentioned ' + lateArrival + ', so let me know and I will make sure the check in time works for you.' : '');
+  }
   if (v.id === 'cali'){
     let t = s && s.window ? cap(s.dayWord) + ' bookings run ' + s.window + ' and you need to be checked in by ' + s.checkIn + '.' : 'Day bookings run 12pm to 6pm with check in by 1pm, and night bookings run 7pm to close with check in by 8pm.';
     if (lateArrival) t += ' You mentioned ' + lateArrival + ', so just a heads up that the booking needs to be checked in by ' + (s && s.checkIn ? s.checkIn : 'then') + ' to keep the spot.';
@@ -1382,7 +1433,7 @@ function writeIntroEmail(lead, an, settings, today){
     if (an.extraGuests) ex += ' It holds up to ' + an.cap + ', so for ' + lead.guests + ' you would add ' + an.extraGuests + ' ' + entryWord(v, an.extraGuests) + ' for the extras.';
     if (an.priced && an.priced.assumed){ const satS = resolveSession(v, nextDay(today, 6), {caliSession:'day'}); const satP = priceOf(v, an.booth, satS); if (satP && satP !== an.money.min && v.id !== 'cali') ex += ' On a Saturday the same booth is ' + fmtMoney(satP) + '.'; ex += ' Let me know the date and numbers and I will confirm it.'; }
     B.push({t:'p', text:ex});
-    if (v.id === 'cali' || an.lateArrival) B.push({t:'p', text:timingLine(v, s, an.lateArrival)});
+    if (v.id === 'cali' || an.lateArrival || s.nye) B.push({t:'p', text:timingLine(v, s, an.lateArrival)});
 
     if (an.simple){
       B.push({t:'h', text:'Packages'});
@@ -1399,7 +1450,7 @@ function writeIntroEmail(lead, an, settings, today){
     }
     if (an.daybeds && an.daybeds.length){
       const d = an.daybeds[0];
-      B.push({t:'p', text:'If you would rather keep it simple, a ' + d.booth.name + ' is a flat ' + fmtMoney(d.price) + ' package fee with ' + d.inc + ' included, no gratuity on top.'});
+      B.push({t:'p', text:'If you would rather keep it simple, a ' + d.booth.name + ' is a flat ' + fmtMoney(d.price) + ' package fee' + (d.inc ? ' with ' + d.inc + ' included' : ' on New Year\'s Eve, inclusions as listed on the NYE event page') + ', no gratuity on top.'});
     }
 
     B.push({t:'h', text:'Locking it in'});
@@ -1409,7 +1460,8 @@ function writeIntroEmail(lead, an, settings, today){
       : 'A 20% deposit of ' + fmtMoney(an.money.deposit) + ' locks the booth in and the balance of ' + fmtMoney(an.money.balance) + ' is paid in venue on the ' + dn + '.';
     const hol = holidayInfo(lead.date);
     if (hol && hol.type === 'holiday') lock += ' That date is a public holiday, so a 15% surcharge applies on the ' + dn + '.';
-    if (v.id === 'taxoffice' && lead.date && lead.date.getDay() === 0) lock += ' Sundays carry a 10% surcharge.';
+    if (v.id === 'taxoffice' && lead.date && lead.date.getDay() === 0 && !s.nye) lock += ' Sundays carry a 10% surcharge.';
+    if (s.nye) lock += ' As it is New Year\'s Eve, the booking is non refundable unless the venue cancels.';
     B.push({t:'p', text:lock});
     B.push({t:'p', text:BLURB});
   } else {
@@ -1461,7 +1513,7 @@ function writeIntroSMS(lead, an, settings, today){
     L.push(cap(an.booth.name) + ' would suit your group, it is a ' + fmtMoney(m.min) + ' minimum spend' + dayBit + ' that all goes on your ' + drinksWord(v) + ', plus ' + fmtMoney(m.grat) + ' gratuity for your waitress, ' + fmtMoney(m.total) + ' all up');
     if (an.extraGuests) L.push('It holds up to ' + an.cap + ', so for ' + lead.guests + ' you would add ' + an.extraGuests + ' ' + entryWord(v, an.extraGuests) + ' for the extras');
     if (an.priced && an.priced.assumed) L.push('That is ' + an.priced.dayWord + ' pricing, let me know your date and numbers and I will confirm it');
-    L.push('A 20% deposit locks it in and the rest is paid in venue on the ' + dayNight(v, an.priced));
+    L.push('A 20% deposit locks it in and the rest is paid in venue on the ' + dayNight(v, an.priced) + (an.priced && an.priced.nye ? ', just so you know NYE bookings are non refundable unless the venue cancels' : ''));
     L.push('I have emailed you the details and the brochure, any questions give me a call' + ((settings && settings.mobile) ? ' on ' + settings.mobile : ''));
   } else {
     L.push('Let me know the date and how many are coming and I will send the options straight back');
@@ -1522,8 +1574,8 @@ function writeCallScript(lead, an, settings, today){
     if (mb) P.push(mb);
     if (v.id === 'cali') P.push('Every package comes with a complimentary food package of ' + CALI_FOOD + ', and the booth includes express entry, your own waitress and towels for everyone.');
     P.push('I can also put a special mention in with your host for a ' + (occ ? occ.sign : 'sign') + ' on the booth and sparklers with your first bottle, to make it a proper Instagram moment.');
-    if (an.lateArrival) P.push(timingLine(v, s, an.lateArrival));
-    P.push('To lock it in it is a 20% deposit, which is ' + fmtMoney(m.deposit) + ', and the rest is paid in venue on the ' + dn + '.');
+    if (an.lateArrival || (s && s.nye)) P.push(timingLine(v, s, an.lateArrival));
+    P.push('To lock it in it is a 20% deposit, which is ' + fmtMoney(m.deposit) + ', and the rest is paid in venue on the ' + dn + '.' + (s && s.nye ? ' Just so you know, New Year\'s Eve is a special event so the booking is non refundable unless the venue cancels.' : ''));
     P.push('Would you like me to email the details through?');
   } else {
     P.push('To get the right booth and pricing for you, ' + lower(askLine(lead) || 'let me know a few more details.'));
@@ -1719,9 +1771,9 @@ function writeReply(ctx, text, scenarioId, settings, today){
     case 'avail': {
       if (v && lead.date && open){
         B.push({t:'p', text:'Let me check the calendar for ' + fmtDate(lead.date) + (lead.guests ? ' for your group of ' + lead.guests : '') + ' and I will come straight back to you.'});
-        B.push({t:'p', text:'Booths go quickly on a ' + (s.dayWord || 'weekend') + ', so a deposit is the only way to hold one.' + (an.booth && !an.extraGuests ? ' ' + boothLine() : '')});
+        B.push({t:'p', text:'Booths go quickly ' + (s.dayWord ? 'on ' + dayPhrase(s) : 'on a weekend') + ', so a deposit is the only way to hold one.' + (an.booth && !an.extraGuests ? ' ' + boothLine() : '')});
         if (an.booth && an.extraGuests) B.push({t:'p', text:cap(an.booth.name) + ' is the biggest booth at ' + fmtMoney(m.min) + ' and holds up to ' + an.cap + ', so for ' + lead.guests + ' you would add ' + an.extraGuests + ' ' + entryWord(v, an.extraGuests) + ' for the extras.'});
-        sms.push('Hi ' + first + ', checking ' + fmtDate(lead.date) + ' for you now and will come straight back', 'Booths go quick on a ' + (s.dayWord || 'weekend') + ' so a deposit is the only way to hold one');
+        sms.push('Hi ' + first + ', checking ' + fmtDate(lead.date) + ' for you now and will come straight back', 'Booths go quick ' + (s.dayWord ? 'on ' + dayPhrase(s) : 'on a weekend') + ' so a deposit is the only way to hold one');
       } else if (v && an.closed){
         B.push({t:'p', text:fmtDate(lead.date) + ' is a ' + an.session.label + ' and ' + v.prose + ' ' + v.closedNote + '. If a ' + (v.id === 'cali' ? 'Friday, Saturday or Sunday' : 'Friday or Saturday') + ' could work, let me know and I will check it straight away.'});
         sms.push('Hi ' + first + ', ' + v.prose + ' ' + v.closedNote + ', is there a ' + (v.id === 'cali' ? 'Friday, Saturday or Sunday' : 'weekend night') + ' that works?');
@@ -1901,7 +1953,7 @@ function writeQuoteEmail(q, r, ctx, settings){
   B.push({t:'p', text:'Here is everything for your booking at ' + v.prose + (ctx.date ? ' on ' + fmtDate(ctx.date) : '') + (ctx.guests ? ' for ' + ctx.guests + ' guests' : '') + ', so you have it all in one place.'});
   B.push({t:'h', text:'Your booking'});
   B.push({t:'b', text:cap(r.booth.name) + ', up to ' + boothCap(v, r.booth, s) + ' guests'});
-  if (r.daybed) B.push({t:'l', text:'Flat package fee with ' + r.booth.inclusions[s.time === 'day' ? 'day' : 'night'] + ' included.'});
+  if (r.daybed) B.push({t:'l', text:s && s.nye ? 'Flat package fee for New Year\'s Eve, inclusions as listed on the NYE event page.' : 'Flat package fee with ' + r.booth.inclusions[s.time === 'day' ? 'day' : 'night'] + ' included.'});
   else if (r.pkg){ B.push({t:'l', text:'Package ' + r.pkg.n + ', ' + itemsLine(r.pkg) + '.'}); }
   else B.push({t:'l', text:'Bottle service tab of ' + fmtMoney(r.spend) + ' to spend from the bottle list on the ' + dn + '.'});
   if (q.mixes) B.push({t:'kv', k:'Mixers', text:q.mixes});
@@ -1927,6 +1979,7 @@ function writeQuoteEmail(q, r, ctx, settings){
   B.push({t:'p', text:timingLine(v, s, null)});
   if (r.pkg && /mixers/i.test(r.pkg.items.join(' ')) && !q.mixes) B.push({t:'p', text:'Your package comes with three mixers, so let me know which three you would like from ' + joinList(MIXERS) + '.'});
   if (!q.signage) B.push({t:'p', text:'If you would like a sign on the booth and sparklers with your first bottle, send me two or three words for the sign and I will put the request in with your host.'});
+  if (s && s.nye) B.push({t:'p', text:'As it is New Year\'s Eve, the booking is non refundable unless the venue cancels.'});
   B.push({t:'p', text:'The cardholder needs to be there on the ' + dn + ' with the card used for the deposit and matching photo ID, and everyone needs valid photo ID.'});
   if (v.id === 'cali') B.push({t:'p', text:'Every package comes with a complimentary food package of ' + CALI_FOOD + '. Towels are provided for everyone and the pool is open until 8pm.'});
   B.push({t:'h', text:'Next step'});
@@ -1935,17 +1988,64 @@ function writeQuoteEmail(q, r, ctx, settings){
   B.push({t:'sig', lines:signoffLines(settings, v)});
   return {subject:'Your booking at ' + cap(v.prose) + (ctx.date ? ' on ' + fmtDate(ctx.date) : ''), blocks:B};
 }
-function writeSevenRooms(q, r, ctx){
+function sevenRoomsNote(f){
+  f = f || {};
+  const money = x => x == null ? '$xxx' : fmtMoney(x);
   const L = [];
-  L.push('Venue balance due ' + fmtMoney(r.balance));
-  L.push('Deposit paid ' + fmtMoney(r.deposit) + (r.online ? ' plus ' + fmtMoney(r.online) + ' online surcharge' : ''));
-  L.push(r.daybed ? 'Daybed package' : r.pkg ? 'Package ' + r.pkg.n : 'Bottle service tab ' + fmtMoney(r.spend));
-  L.push('Mixes ' + (q.mixes || 'to confirm'));
-  L.push('Signage ' + (q.signage || 'none'));
-  L.push(r.daybed ? 'Package fee ' + fmtMoney(r.min) : 'Min spend ' + fmtMoney(r.min) + ' plus 5% gratuity' + (r.spend > r.min ? ', package ' + fmtMoney(r.spend) : '') + (r.holiday ? ' plus 15% public holiday surcharge' : '') + (r.sunday ? ' plus 10% Sunday surcharge' : ''));
-  L.push('Total ' + fmtMoney(r.total));
-  L.push((ctx.guests ? ctx.guests + ' guests' : 'Guests') + ' arriving ' + (q.arrival || (r.venue.id === 'cali' ? 'by ' + (r.session && r.session.checkIn ? r.session.checkIn : 'check in') : r.venue.id === 'taxoffice' ? 'at the confirmation time' : 'by 11pm')));
+  L.push('DUE IN VENUE: ' + money(f.balance));
+  L.push('Deposit via 7R: ' + money(f.deposit) + (f.online ? ' plus ' + fmtMoney(f.online) + ' online surcharge' : ''));
+  L.push('');
+  L.push('Package: ' + (f.pkg || 'pending'));
+  L.push('Mixes: ' + (f.mixes || 'pending'));
+  L.push('Sign: ' + (f.sign || 'pending'));
+  L.push('');
+  if (f.daybed) L.push(money(f.min) + ' package fee, no grat');
+  else L.push(money(f.min) + ' min spend +5% grat' + (f.pkgPrice ? ', package ' + fmtMoney(f.pkgPrice) : '') + (f.holiday ? ' +15% public holiday' : '') + (f.sunday ? ' +10% Sunday' : ''));
+  L.push('Total: ' + money(f.total));
+  L.push('');
+  L.push((f.guests || 'xxx') + ' guests / arrival ' + (f.arrival || 'pending'));
   return L.join('\n');
+}
+function writeSevenRooms(q, r, ctx){
+  return sevenRoomsNote({
+    balance:r.balance, deposit:r.deposit, online:r.online,
+    pkg: r.daybed ? 'daybed package' : r.pkg ? 'Package ' + r.pkg.n : r.spend > r.min ? 'bottle service tab ' + fmtMoney(r.spend) : null,
+    mixes:q.mixes || null, sign:q.signage || null,
+    daybed:r.daybed, min:r.min, pkgPrice: (!r.daybed && r.spend > r.min) ? r.spend : null, holiday:!!r.holiday, sunday:!!r.sunday, total:r.total,
+    guests:ctx.guests || null,
+    arrival: q.arrival || (r.venue.id === 'cali' ? (r.session && r.session.checkIn ? 'by ' + r.session.checkIn : null) : r.venue.id === 'taxoffice' ? null : 'by 11pm')
+  });
+}
+function writeEnquiryPost(lead, an){
+  const v = an && an.venue;
+  const L = [];
+  L.push('Venue: ' + (v ? v.fullName : 'xxx'));
+  L.push('What it\'s for: ' + (lead && lead.occasion ? cap(lead.occasion.short) : 'xxx'));
+  L.push('Guests: ' + (lead && lead.guests ? lead.guests : 'xxx'));
+  L.push('Day and date: ' + (lead && lead.date ? fmtDate(lead.date) + (v && v.id === 'cali' && an.session && an.session.dayWord ? ', ' + an.session.dayWord : '') : 'xxx'));
+  L.push('Minimum spend and booth suggestion: ' + (an && an.booth && an.money ? cap(an.booth.name) + ', ' + fmtMoney(an.money.min) + ' minimum spend plus 5% gratuity, ' + fmtMoney(an.money.total) + ' total' + (an.simple ? ', Package ' + an.simple.pkg.n + ' at ' + fmtMoney(an.simple.price) + (an.stepUp ? ' or Package ' + an.stepUp.pkg.n + ' at ' + fmtMoney(an.stepUp.price) : '') : '') : 'xxx'));
+  return L.join('\n');
+}
+function writeLockInEmail(venueId, firstName, settings){
+  const v = VENUES[venueId] || null;
+  const dn = v && v.id === 'cali' ? 'day' : 'night';
+  const B = [{t:'p', text:'Hi ' + (firstName || 'there') + ','}];
+  B.push({t:'p', text:'Could you please confirm the last few details so I can finalise your booking' + (v ? ' at ' + v.prose : '') + ':'});
+  B.push({t:'b', text:'1. Sign wording, max 3 words'});
+  B.push({t:'l', text:'Examples: "Birthday Vibes", "Groom Squad", "Cheers Legends"'});
+  B.push({t:'gap'});
+  B.push({t:'b', text:'2. Package choice'});
+  B.push({t:'l', text:'That locks in your bottle service. The package comes off your minimum spend, and any remaining credit can be used on the ' + dn + '.'});
+  B.push({t:'gap'});
+  B.push({t:'b', text:'3. Mixers, pick any 3'});
+  B.push({t:'l', text:MIXERS.join(', ') + '.'});
+  B.push({t:'gap'});
+  B.push({t:'l', text:'You can check the options and inclusions here:'});
+  if (v) B.push({t:'link', url:BOTTLE_LINKS[v.id]}); else B.push({t:'l', text:'xxx'});
+  B.push({t:'p', text:'Keen to finalise everything for an amazing ' + dn + '!'});
+  B.push({t:'p', text:callLine(settings)});
+  B.push({t:'sig', lines:signoffLines(settings, v)});
+  return {subject:'Last few details for your booking' + (v ? ' at ' + cap(v.prose) : ''), blocks:B};
 }
 function writeQuoteCRM(q, r, ctx){
   return 'Sent booking summary for ' + r.booth.name + ' on ' + (r.session && r.session.dayWord ? dayPhrase(r.session) : 'the booked night') + (r.daybed ? ' as a flat package fee of ' + fmtMoney(r.min) : r.pkg ? ' with Package ' + r.pkg.n + ' at ' + fmtMoney(r.pkg.price) : ' with a ' + fmtMoney(r.spend) + ' bottle service tab') + ', total ' + fmtMoney(r.total) + (r.daybed ? '' : ' including the 5% gratuity for the waitress') + '. Deposit of ' + fmtMoney(r.deposit) + ' requested with the balance of ' + fmtMoney(r.balance) + ' paid in venue' + (q.mixes ? ', mixers ' + q.mixes : '') + (q.signage ? ', sign ' + q.signage : '') + '. Nothing confirmed until the 20% deposit is received.';
@@ -1981,6 +2081,7 @@ function writeQuoteCRM(q, r, ctx){
     document.querySelectorAll('.tab').forEach(t => t.classList.toggle('on', t.id === 'tab-' + id));
     if (id === 'reply') prefillReply();
     if (id === 'quote') prefillQuote();
+    if (id === 'templates') renderTemplates();
     window.scrollTo({top:0});
   }
 
@@ -2241,6 +2342,7 @@ function writeQuoteCRM(q, r, ctx){
     const r = computeQuote(q);
     const ctx = {firstName:$('qName').value.trim(), date:d, guests:parseInt($('qGuests').value, 10) || null};
     const email = writeQuoteEmail(q, r, ctx, state.settings);
+    state.lastQuote = {q, r, ctx};
     const rows = [];
     if (r.daybed) rows.push(['Package fee, flat', fmtMoney(r.min)]);
     else if (r.pkg && r.pkg.price > r.min) rows.push(['Package ' + r.pkg.n + ', covers the ' + fmtMoney(r.min) + ' minimum spend', fmtMoney(r.spend)]);
@@ -2264,6 +2366,25 @@ function writeQuoteCRM(q, r, ctx){
     const el = $('quoteOut'); el.innerHTML = out; wire(el); scrollToOut(el);
   });
 
+  /* ---------- templates ---------- */
+  function renderTemplates(){
+    const lq = state.lastQuote, lead = state.lead, an = state.an;
+    const nameEl = $('tName'), venueEl = $('tVenue');
+    if (!nameEl.value){ nameEl.value = lq && lq.ctx.firstName ? lq.ctx.firstName : lead && lead.firstName ? lead.firstName : ''; }
+    if (!venueEl.value){ venueEl.value = lq ? lq.q.venue : lead && lead.venue ? lead.venue : ''; }
+    const first = nameEl.value.trim(), vk = venueEl.value;
+    let seven;
+    if (lq) seven = writeSevenRooms(lq.q, lq.r, lq.ctx);
+    else if (an && an.money) seven = sevenRoomsNote({balance:an.money.balance, deposit:an.money.deposit, min:an.money.min, total:an.money.total, guests:lead.guests || null});
+    else seven = sevenRoomsNote({});
+    let out = '<div class="card"><h2>Enquiry post</h2><p class="muted">CRM note after the first contact.</p>' + textBlock('tEnquiry', 'CRM note', writeEnquiryPost(lead, an || {venue: vk ? VENUES[vk] : null})) + '</div>';
+    out += '<div class="card"><h2>Lock in, 1 week out</h2><p class="muted">SevenRooms note. ' + (lq ? 'Filled from the last quote.' : an && an.money ? 'Filled from the last lead, package, mixes and sign still pending.' : 'Blank until you run a lead or a quote.') + '</p>' + textBlock('tSeven', 'SevenRooms note', seven) + '</div>';
+    out += '<div class="card"><h2>Lock in, 2 weeks out</h2><p class="muted">Asks for the sign wording, package and mixers, with the bottle service link for the venue.</p>' + mailBlock('tLock', 'Email', writeLockInEmail(vk, first, state.settings)) + '</div>';
+    const el = $('templatesOut'); el.innerHTML = out; wire(el);
+  }
+  $('fillTemplates').addEventListener('click', renderTemplates);
+  $('tVenue').addEventListener('change', renderTemplates);
+
   /* ---------- venues ---------- */
   const pick = $('venuePick');
   VENUE_ORDER.forEach((k, i) => { const b = document.createElement('button'); b.textContent = VENUES[k].name; b.dataset.v = k; if (i === 0) b.classList.add('on'); b.addEventListener('click', () => { pick.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b)); renderVenue(k); }); pick.appendChild(b); });
@@ -2283,11 +2404,20 @@ function writeQuoteCRM(q, r, ctx){
     v.booths.forEach(b => { t += '<tr><td>' + h(cap(b.name)) + '<br><span class="small">' + h(cap(b.blurb)) + '</span></td><td class="num">' + b.cap + '</td>' + cols.map(c => '<td class="num">' + (b.enquiry ? 'enquire' : b.prices[c[0]] != null ? h(fmtMoney(b.prices[c[0]])) : 'n/a') + '</td>').join('') + '</tr>'; });
     return t + '</table></div>';
   }
+  function nyeTable(v){
+    const n = NYE[v.id]; if (!n) return '';
+    let t = '<h3 class="mt24">New Year\'s Eve ' + NYE.year + '</h3><p class="muted">' + (n.live ? 'Live on the NYE sheet.' : 'Marked TBC and not live yet on the NYE sheet, confirm before quoting.') + ' NYE bookings are non refundable unless the venue cancels.</p>';
+    t += '<div class="tablewrap"><table><tr><th>Area</th><th class="num">Holds on NYE</th><th class="num">31 December</th></tr>';
+    v.booths.forEach(b => { const e = n.booths[b.id]; if (!e) return; t += '<tr><td>' + h(cap(b.name)) + (b.type === 'daybed' ? '<br><span class="small">Flat fee, no gratuity</span>' : '') + '</td><td class="num">' + e.cap + '</td><td class="num">' + h(fmtMoney(e.price)) + '</td></tr>'; });
+    t += '</table></div>';
+    if (n.tickets.length) t += '<p class="small mt">NYE tickets: ' + h(n.tickets.map(x => x[0] + ' ' + fmtMoney(x[1])).join(', ')) + '.</p>';
+    return t;
+  }
   function renderVenue(k){
     const v = VENUES[k];
     let out = '<div class="card"><h2>' + h(v.fullName) + '</h2><p class="muted">' + h(v.vibe) + '</p>';
     out += '<div class="facts mt"><div class="fact"><b class="sm">' + h(v.address) + '</b><span>Address</span></div><div class="fact"><b class="sm">' + h(v.phone) + '</b><span>Phone</span></div><div class="fact"><b class="sm">' + h(v.hours) + '</b><span>Hours</span></div><div class="fact"><b class="sm">' + h(v.web) + '</b><span>Website</span></div></div></div>';
-    out += '<div class="card"><h2>Booths and minimum spends</h2><p class="muted">Minimum spend is a credit on ' + h(drinksWord(v)) + ', plus 5% gratuity for the waitress. Always follow the website for special events.</p>' + priceTable(v) + '</div>';
+    out += '<div class="card"><h2>Booths and minimum spends</h2><p class="muted">Minimum spend is a credit on ' + h(drinksWord(v)) + ', plus 5% gratuity for the waitress. Always follow the website for special events.</p>' + priceTable(v) + nyeTable(v) + '</div>';
     out += '<div class="card"><h2>Packages</h2>' + v.packages.map(p => '<div class="pkgrow"><b>Package ' + p.n + '<br>' + h(fmtMoney(p.price)) + '</b><span>' + h(p.items.join(', ')) + '</span></div>').join('');
     if (v.spray) out += '<div class="pkgrow"><b>Spray packages</b><span>' + h(v.spray.map(sp => sp.qty + ' x Veuve Clicquot 750ml ' + fmtMoney(sp.price) + ', saves ' + fmtMoney(sp.save)).join('. ')) + '. Waitresses bring the bottles out in ponchos with spray guns.</span></div>';
     out += '</div>';
