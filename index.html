@@ -672,14 +672,14 @@ const VENUES = {
     hours:'Friday and Saturday 9pm to 3am, plus long weekends and special events', hoursLine:'Doors open 9pm on Friday and Saturday and close at 3am, plus long weekends and special events.',
     vibe:'Hip hop and RnB with regular guest DJs and live shows. 480 capacity, six VIP booths over the dance floor.',
     days:{fri:'Friday', sat:'Saturday'}, closedNote:'runs Fridays and Saturdays, plus long weekends and special events', night:true,
-    rules: CLUB_RULES.concat(['Booth 5 is enquiry only and is not on the website.']),
+    rules: CLUB_RULES.concat(['Booth 5 is enquiry only and is not on the website, so it is booked through us, check it is free with the venue first.']),
     booths:[
       {id:'b1', name:'Booth 1', cap:12, rank:6, blurb:'right next to the DJ booth with views of the whole venue, our most in demand booth', prices:{fri:1000, sat:1500}},
       {id:'b2', name:'Booth 2', cap:10, rank:4, blurb:'elevated just left of the DJ booth, front and centre to the action', prices:{fri:950, sat:1200}},
       {id:'b3', name:'Booth 3', cap:12, rank:5, blurb:'elevated above every other booth with the best views in the club', prices:{fri:1000, sat:1500}},
       {id:'b34', name:'Booths 3 and 4 combined', cap:20, rank:7, blurb:'the two best booths joined into one big area, with views of the DJ, both bars and the dance floor', prices:{fri:2000, sat:2500}},
       {id:'b4', name:'Booth 4', cap:8, rank:2, blurb:'right beside the VIP bar, ideal for a smaller group that wants to dance all night', prices:{fri:800, sat:950}},
-      {id:'b5', name:'Booth 5', cap:15, rank:3, blurb:'the largest booth, elevated over the dance floor with room to dance', prices:{fri:900, sat:1050}, enquiry:true},
+      {id:'b5', name:'Booth 5', cap:15, rank:3, blurb:'the largest booth, elevated over the dance floor with room to dance', prices:{fri:900, sat:1050}, check:'enquiry only and not on the website, so check it is free with Havana before you confirm it'},
       {id:'b6', name:'Booth 6', cap:10, rank:1, blurb:'tucked away by the main bar for a more relaxed night', prices:{fri:850, sat:1000}}
     ],
     packages: HAVANA_PACKAGES, bottles: NIGHTCLUB_BOTTLES, houseVodka:'Belvedere', vodkaPrice:400
@@ -1217,6 +1217,7 @@ function buildOptions(lead, opts){
   const booth = sorted[0];
   const min = priceOf(venue, booth, session);
   out.booth = booth; out.cap = boothCap(venue, booth, session); out.money = boothMoney(min); out.extraGuests = extraGuests;
+  if (booth.check) out.flags.push({level:'warn', text:cap(booth.name) + ' is ' + booth.check + '.'});
   if (extraGuests > 0 && !out.handoff){
     const enquiryFit = venue.booths.filter(b => b.enquiry && b.cap >= guests);
     out.enquiryBooths = enquiryFit;
@@ -2355,7 +2356,8 @@ function writeQuoteCRM(q, r, ctx){
     rows.push(['Deposit to lock it in, 20%', fmtMoney(r.deposit), 'sub']);
     if (r.online) rows.push(['Card surcharge on the deposit, 2.1%', fmtMoney(r.online), 'sub']);
     rows.push(['Balance paid in venue', fmtMoney(r.balance), 'sub']);
-    let out = '<div class="card"><div class="rec-head"><div><h2>' + h(cap(r.booth.name)) + '</h2><p class="muted">' + h(d ? fmtDate(d) + (v.id === 'cali' ? ', ' + s.dayWord : '') : cap(dayPhrase(s)).replace(/^A /, '')) + '</p></div><span class="chip">Holds ' + boothCap(v, r.booth, s) + '</span></div>' + rowsHTML(rows);
+    let out = r.booth.check ? '<div class="card">' + flagsHTML([{level:'warn', text:cap(r.booth.name) + ' is ' + r.booth.check + '.'}]) + '</div>' : '';
+    out += '<div class="card"><div class="rec-head"><div><h2>' + h(cap(r.booth.name)) + '</h2><p class="muted">' + h(d ? fmtDate(d) + (v.id === 'cali' ? ', ' + s.dayWord : '') : cap(dayPhrase(s)).replace(/^A /, '')) + '</p></div><span class="chip">Holds ' + boothCap(v, r.booth, s) + '</span></div>' + rowsHTML(rows);
     if (r.pkg) out += '<p class="explain">' + h(r.pkg.items.join(', ')) + '</p>';
     out += '</div>';
     out += '<div class="card"><h2>Messages</h2>';
@@ -2401,7 +2403,7 @@ function writeQuoteCRM(q, r, ctx){
     }
     const cols = Object.keys(v.days).map(k => [k, k === 'monthu' ? 'Mon to Thu' : cap(v.days[k])]);
     let t = '<div class="tablewrap"><table><tr><th>Booth</th><th class="num">Holds</th>' + cols.map(c => '<th class="num">' + c[1] + '</th>').join('') + '</tr>';
-    v.booths.forEach(b => { t += '<tr><td>' + h(cap(b.name)) + '<br><span class="small">' + h(cap(b.blurb)) + '</span></td><td class="num">' + b.cap + '</td>' + cols.map(c => '<td class="num">' + (b.enquiry ? 'enquire' : b.prices[c[0]] != null ? h(fmtMoney(b.prices[c[0]])) : 'n/a') + '</td>').join('') + '</tr>'; });
+    v.booths.forEach(b => { t += '<tr><td>' + h(cap(b.name)) + '<br><span class="small">' + h(cap(b.blurb)) + (b.check ? '. Enquiry only, not on the website' : '') + '</span></td><td class="num">' + b.cap + '</td>' + cols.map(c => '<td class="num">' + (b.enquiry ? 'enquire' : b.prices[c[0]] != null ? h(fmtMoney(b.prices[c[0]])) : 'n/a') + '</td>').join('') + '</tr>'; });
     return t + '</table></div>';
   }
   function nyeTable(v){
